@@ -5,9 +5,12 @@ import { getLocalTests, saveTestToLocal, saveTestToFirestore } from '../firebase
 import { hasFirebaseConfig } from '../firebase/config'
 import { QuestionEditor } from '../components/creator/QuestionEditor'
 import { JsonImporter } from '../components/creator/JsonImporter'
+import { JsonPasteModal } from '../components/ui/JsonPasteModal'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { ArrowLeft, Plus, Save, Globe, Lock, Shuffle } from 'lucide-react'
+import { FolderSelect } from '../components/ui/FolderSelect'
+import { importTestFromJson } from '../utils/jsonImporter'
+import { ArrowLeft, Plus, Save, Globe, Lock, Shuffle, ClipboardPaste, FileDown } from 'lucide-react'
 import type { Test, Question } from '../types'
 
 const generateCode = () => {
@@ -19,8 +22,10 @@ const generateCode = () => {
   return code
 }
 
+let questionIdCounter = Date.now()
+
 const emptyQuestion = (): Question => ({
-  id: Date.now(),
+  id: questionIdCounter++,
   text: '',
   type: 'multiple',
   options: ['', '', '', ''],
@@ -46,8 +51,10 @@ export const Creator = () => {
   const [code, setCode] = useState(generateCode())
   const [shuffleQuestions, setShuffleQuestions] = useState(false)
   const [shuffleOptions, setShuffleOptions] = useState(false)
+  const [folderId, setFolderId] = useState<string | undefined>(undefined)
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [showPasteModal, setShowPasteModal] = useState(false)
 
   useEffect(() => {
     if (editTest && !loaded) {
@@ -61,6 +68,7 @@ export const Creator = () => {
       setCode(editTest.code || generateCode())
       setShuffleQuestions(editTest.shuffleQuestions || false)
       setShuffleOptions(editTest.shuffleOptions || false)
+      setFolderId(editTest.folderId || undefined)
       setLoaded(true)
     }
   }, [editTest, loaded])
@@ -90,12 +98,29 @@ export const Creator = () => {
     setCategory(test.category)
     setDifficulty(test.difficulty)
     setTimePerQuestion(test.timePerQuestion)
-    setQuestions(test.questions)
+    setQuestions(test.questions.map(q => ({ ...q, id: questionIdCounter++ })))
     setVisibility(test.visibility || 'private')
     setCode(test.code || generateCode())
     setShuffleQuestions(test.shuffleQuestions || false)
     setShuffleOptions(test.shuffleOptions || false)
     setLoaded(true)
+  }
+
+  const handlePasteImport = (test: Test) => {
+    // Same as file import: replace current test with pasted data
+    handleImport(test)
+  }
+
+  const handleImportQuestions = async () => {
+    try {
+      const test = await importTestFromJson()
+      const newQuestions = test.questions.map(q => ({ ...q, id: questionIdCounter++ }))
+      if (newQuestions.length === 0) return
+      if (!title.trim() && test.title) setTitle(test.title)
+      setQuestions([...questions, ...newQuestions])
+    } catch {
+      // user cancelled or error
+    }
   }
 
   const handleSave = async () => {
@@ -115,6 +140,7 @@ export const Creator = () => {
       code,
       shuffleQuestions,
       shuffleOptions,
+      folderId,
     }
 
     if (hasFirebaseConfig) {
@@ -144,12 +170,17 @@ export const Creator = () => {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
+      <JsonPasteModal isOpen={showPasteModal} onClose={() => setShowPasteModal(false)} onImport={handlePasteImport} />
+
       <div className="flex items-center gap-4">
         <Button variant="ghost" onClick={() => navigate('/')}>
           <ArrowLeft size={18} />
         </Button>
         <h1 className="text-2xl font-bold text-white">{editTest ? 'Editar test' : 'Crear test'}</h1>
-        <div className="ml-auto flex gap-3">
+        <div className="ml-auto flex gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setShowPasteModal(true)}>
+            <ClipboardPaste size={14} /> Pegar JSON
+          </Button>
           <JsonImporter onImport={handleImport} />
         </div>
       </div>
@@ -249,6 +280,10 @@ export const Creator = () => {
         </div>
 
         <div className="border-t border-gray-800 pt-4 space-y-3">
+          <FolderSelect value={folderId} onChange={setFolderId} />
+        </div>
+
+        <div className="border-t border-gray-800 pt-4 space-y-3">
           <label className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Aleatorizar</label>
           <div className="flex gap-3">
             <button
@@ -278,6 +313,17 @@ export const Creator = () => {
       </Card>
 
       <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white">Preguntas ({questions.length})</h2>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={handleImportQuestions}>
+              <FileDown size={14} /> Importar preguntas
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowPasteModal(true)}>
+              <ClipboardPaste size={14} /> Pegar preguntas
+            </Button>
+          </div>
+        </div>
         {questions.map((q, i) => (
           <QuestionEditor
             key={q.id}

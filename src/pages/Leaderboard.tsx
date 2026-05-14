@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useAuthStore } from '../store/useAuthStore'
 import { getLocalAnswers } from '../firebase/answersService'
 import { Card } from '../components/ui/Card'
@@ -50,7 +51,13 @@ export const Leaderboard = () => {
       ) : (
         <div className="space-y-3">
           {sorted.map((entry, i) => (
-            <Card key={entry.id} className="flex items-center gap-4">
+            <motion.div
+              key={entry.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05, type: 'spring', stiffness: 200, damping: 20 }}
+            >
+            <Card className="flex items-center gap-4">
               <div className="w-10 text-center">
                 {i < 3 ? (
                   <Medal size={24} className={podium[i]} />
@@ -69,6 +76,7 @@ export const Leaderboard = () => {
                 <div className="text-xs text-gray-500">pts totales</div>
               </div>
             </Card>
+            </motion.div>
           ))}
         </div>
       )}

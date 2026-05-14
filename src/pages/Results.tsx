@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useAuthStore } from '../store/useAuthStore'
 import { ScoreDisplay } from '../components/quiz/ScoreDisplay'
 import { Button } from '../components/ui/Button'
@@ -58,7 +59,12 @@ export const Results = () => {
         />
       </Card>
 
-      <div className="flex gap-3">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="flex gap-3"
+      >
         <Button variant="secondary" onClick={() => navigate('/')} className="flex-1">
           <Home size={16} /> Inicio
         </Button>
@@ -68,13 +74,21 @@ export const Results = () => {
         <Button onClick={() => exportAnswersAsJson(answerSet)}>
           <Download size={16} /> Exportar
         </Button>
-      </div>
+      </motion.div>
 
-      <div className="space-y-3">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="space-y-3"
+      >
         {answerSet.answers.map((a, i) => {
           return (
-            <div
+            <motion.div
               key={i}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 + i * 0.04 }}
               className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm ${
                 a.isCorrect ? 'bg-green-500/10 border border-green-500/20' : 'bg-red-500/10 border border-red-500/20'
               }`}
@@ -87,10 +101,10 @@ export const Results = () => {
                 </span>
                 <span className="text-gray-500">{a.timeUsed.toFixed(1)}s</span>
               </div>
-            </div>
+            </motion.div>
           )
         })}
-      </div>
+      </motion.div>
     </div>
   )
 }

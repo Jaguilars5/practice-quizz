@@ -30,9 +30,10 @@ export const QuestionCard = ({
   return (
     <motion.div
       key={question.id}
-      initial={{ opacity: 0, x: 50 }}
+      initial={{ opacity: 0, x: 60 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
+      exit={{ opacity: 0, x: -60 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
       className="space-y-6"
     >
       <div className="flex items-center justify-between">
@@ -42,7 +43,14 @@ export const QuestionCard = ({
         <TimerRing timeLeft={timeLeft} timeLimit={question.timeLimit} />
       </div>
 
-      <h2 className="text-xl font-bold text-white">{question.text}</h2>
+      <motion.h2
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-xl font-bold text-white"
+      >
+        {question.text}
+      </motion.h2>
 
       <div className="space-y-3">
         {options.map((opt, i) => {
@@ -57,16 +65,22 @@ export const QuestionCard = ({
           else if (isSelected) borderColor = 'border-primary-500 bg-primary-500/10'
 
           return (
-            <AnswerOption
+            <motion.div
               key={i}
-              text={opt}
-              selected={isSelected}
-              correct={showCorrect}
-              wrong={showWrong}
-              disabled={showResult}
-              onClick={() => onSelect(i)}
-              borderColor={borderColor}
-            />
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.05, type: 'spring', stiffness: 200, damping: 20 }}
+            >
+              <AnswerOption
+                text={opt}
+                selected={isSelected}
+                correct={showCorrect}
+                wrong={showWrong}
+                disabled={showResult}
+                onClick={() => onSelect(i)}
+                borderColor={borderColor}
+              />
+            </motion.div>
           )
         })}
       </div>

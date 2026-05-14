@@ -16,7 +16,13 @@ export const getTests = async (): Promise<Test[]> => {
 }
 
 export const getGlobalTests = async (): Promise<Test[]> => {
-  const q = query(testsRef(), where('visibility', '==', 'global'), orderBy('createdAt', 'desc'), limit(50))
+  const q = query(testsRef(), where('visibility', '==', 'global'))
+  const snapshot = await getDocs(q)
+  return snapshot.docs.map(d => ({ ...d.data(), id: d.id } as Test))
+}
+
+export const getTestsByCreator = async (email: string): Promise<Test[]> => {
+  const q = query(testsRef(), where('createdBy', '==', email))
   const snapshot = await getDocs(q)
   return snapshot.docs.map(d => ({ ...d.data(), id: d.id } as Test))
 }

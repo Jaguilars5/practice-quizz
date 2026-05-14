@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useAuthStore } from '../store/useAuthStore'
 import { getAnswersByPlayer, getLocalAnswers } from '../firebase/answersService'
 import { hasFirebaseConfig } from '../firebase/config'
@@ -83,7 +84,13 @@ export const MyAnswers = () => {
             const accColor = acc >= 80 ? 'green' : acc >= 50 ? 'yellow' : 'red'
 
             return (
-              <Card key={i}>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04, type: 'spring', stiffness: 200, damping: 20 }}
+              >
+              <Card>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-bold text-white truncate">{a.testTitle}</h3>
@@ -109,6 +116,7 @@ export const MyAnswers = () => {
                   </div>
                 </div>
               </Card>
+              </motion.div>
             )
           })}
         </div>

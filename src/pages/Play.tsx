@@ -161,6 +161,8 @@ export const Play = () => {
     setShowResult(true)
 
     setTimeout(() => {
+      setShowResult(false)
+      setSelected(null)
       if (currentQuestionIndex + 1 < totalQuestions) {
         nextQuestion()
       } else {

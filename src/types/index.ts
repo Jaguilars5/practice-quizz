@@ -23,6 +23,14 @@ export interface Test {
   code: string
   shuffleQuestions?: boolean
   shuffleOptions?: boolean
+  folderId?: string
+}
+
+export interface Folder {
+  id: string
+  name: string
+  createdBy: string
+  createdAt: string
 }
 
 export interface PlayerAnswer {
