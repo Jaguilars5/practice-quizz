@@ -64,6 +64,10 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       timeUsed,
       pointsEarned: base,
       bonusPoints: bonus,
+      questionText: question.text,
+      options: question.options,
+      correctAnswer: question.correct,
+      explanation: question.explanation,
     }
 
     set({

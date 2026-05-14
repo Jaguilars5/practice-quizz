@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '../store/useAuthStore'
+import { getLocalTests } from '../firebase/testsService'
 import { ScoreDisplay } from '../components/quiz/ScoreDisplay'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
+import { AnswerDetail } from '../components/quiz/AnswerDetail'
 import { exportAnswersAsJson } from '../utils/jsonExporter'
 import { Home, Download, RotateCcw, PartyPopper } from 'lucide-react'
 import confetti from 'canvas-confetti'
@@ -15,6 +17,8 @@ export const Results = () => {
   const location = useLocation()
   const { user } = useAuthStore()
   const [answerSet] = useState<AnswerSet | null>(location.state?.answerSet)
+  const questions = (location.state as { questions?: import('../types').Question[] })?.questions
+    || (answerSet ? getLocalTests().find(t => t.id === answerSet.testId)?.questions : undefined)
 
   useEffect(() => {
     if (!user) navigate('/login')
@@ -40,7 +44,7 @@ export const Results = () => {
   }
 
   return (
-    <div className="max-w-lg mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6">
       {parseInt(answerSet.stats.accuracy) >= 80 && (
         <div className="flex justify-center">
           <PartyPopper size={48} className="text-yellow-400" />
@@ -80,27 +84,30 @@ export const Results = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="space-y-3"
+        className="space-y-4"
       >
+        <h2 className="text-lg font-bold text-white">Detalle de respuestas</h2>
         {answerSet.answers.map((a, i) => {
+          const q = questions?.[i]
           return (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 + i * 0.04 }}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm ${
-                a.isCorrect ? 'bg-green-500/10 border border-green-500/20' : 'bg-red-500/10 border border-red-500/20'
-              }`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 + i * 0.05 }}
             >
-              <span className="text-gray-300">Pregunta {i + 1}</span>
-              <div className="flex items-center gap-3">
-                <span className={a.isCorrect ? 'text-green-400' : 'text-red-400'}>
-                  {a.isCorrect ? `+${a.pointsEarned}` : '0'}
-                  {a.bonusPoints > 0 && <span className="text-yellow-400 ml-1">+{a.bonusPoints}</span>}
-                </span>
-                <span className="text-gray-500">{a.timeUsed.toFixed(1)}s</span>
-              </div>
+              <AnswerDetail
+                index={i}
+                questionText={q?.text || a.questionText}
+                options={q?.options || a.options}
+                selectedOption={a.selectedOption}
+                isCorrect={a.isCorrect}
+                pointsEarned={a.pointsEarned}
+                bonusPoints={a.bonusPoints}
+                timeUsed={a.timeUsed}
+                correctAnswer={q?.correct ?? a.correctAnswer}
+                explanation={q?.explanation || a.explanation}
+              />
             </motion.div>
           )
         })}

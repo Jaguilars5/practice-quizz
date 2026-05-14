@@ -41,6 +41,10 @@ export interface PlayerAnswer {
   timeUsed: number
   pointsEarned: number
   bonusPoints: number
+  questionText?: string
+  options?: string[]
+  correctAnswer?: number | boolean
+  explanation?: string
 }
 
 export interface AnswerStats {

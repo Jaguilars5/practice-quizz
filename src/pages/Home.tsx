@@ -12,7 +12,7 @@ import { Modal } from '../components/ui/Modal'
 import { JsonImporter } from '../components/creator/JsonImporter'
 import { JsonPasteModal } from '../components/ui/JsonPasteModal'
 import { FolderList } from '../components/ui/FolderList'
-import { Plus, BookOpen, Search, AlertCircle, Loader2, FolderOpen, ClipboardPaste } from 'lucide-react'
+import { Plus, BookOpen, Search, AlertCircle, Loader2, FolderOpen, ClipboardPaste, ArrowUpDown } from 'lucide-react'
 import type { Test, Folder } from '../types'
 
 export const Home = () => {
@@ -28,6 +28,8 @@ export const Home = () => {
   const [searchError, setSearchError] = useState('')
   const [showPasteModal, setShowPasteModal] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<Test | null>(null)
+  const [sortNewest, setSortNewest] = useState(true)
+  const [searchTitle, setSearchTitle] = useState('')
 
   const refreshFolders = () => setFolders(getLocalFolders())
 
@@ -79,10 +81,19 @@ export const Home = () => {
   }, [user])
 
   const filteredTests = useMemo(() => {
-    if (!activeFolder) return tests
-    if (activeFolder === '__uncategorized') return tests.filter(t => !t.folderId)
-    return tests.filter(t => t.folderId === activeFolder)
-  }, [tests, activeFolder])
+    let result = !activeFolder ? tests
+      : activeFolder === '__uncategorized' ? tests.filter(t => !t.folderId)
+      : tests.filter(t => t.folderId === activeFolder)
+    if (searchTitle.trim()) {
+      const q = searchTitle.toLowerCase()
+      result = result.filter(t => t.title.toLowerCase().includes(q))
+    }
+    return [...result].sort((a, b) =>
+      sortNewest
+        ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )
+  }, [tests, activeFolder, sortNewest, searchTitle])
 
   const folderCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -287,11 +298,32 @@ export const Home = () => {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-bold text-white mb-4">
-            {activeFolder
-              ? folders.find(f => f.id === activeFolder)?.name || 'Sin carpeta'
-              : 'Tus tests'}
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-xl font-bold text-white">
+                {activeFolder
+                  ? folders.find(f => f.id === activeFolder)?.name || 'Sin carpeta'
+                  : 'Tus tests'}
+              </h2>
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                <input
+                  type="text"
+                  value={searchTitle}
+                  onChange={(e) => setSearchTitle(e.target.value)}
+                  placeholder="Buscar test..."
+                  className="bg-gray-800 border border-gray-700 rounded-lg pl-8 pr-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 w-40 sm:w-48"
+                />
+              </div>
+            </div>
+            <button
+              onClick={() => setSortNewest(!sortNewest)}
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-white transition-colors"
+            >
+              <ArrowUpDown size={14} />
+              {sortNewest ? 'Más recientes' : 'Más antiguos'}
+            </button>
+          </div>
 
           {filteredTests.length === 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16 text-gray-500">

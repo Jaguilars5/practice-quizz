@@ -193,7 +193,7 @@ export const Play = () => {
       } else {
         saveAnswerToLocal(result)
       }
-      navigate('/results', { state: { answerSet: result } })
+      navigate('/results', { state: { answerSet: result, questions: test?.questions } })
     }
   }, [isFinished])
 
