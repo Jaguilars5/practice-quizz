@@ -1,0 +1,462 @@
+{
+  "id": "test_transformacion_bi_3",
+  "title": "Transformación Digital e Inteligencia de Negocios - Repaso de Conceptos",
+  "description": "Cuestionario para memorizar los conceptos clave de transformación digital, BI, datos e información y arquitectura BI",
+  "category": "Sistemas de Información",
+  "difficulty": "medio-alto",
+  "timePerQuestion": 35,
+  "createdBy": "tu@gmail.com",
+  "createdAt": "2026-05-14T05:55:00Z",
+  "questions": [
+    {
+      "id": 1,
+      "text": "¿Qué expresa mejor la idea central de la transformación digital en una empresa?",
+      "type": "multiple",
+      "options": [
+        "Integrar tecnología digital en procesos, productos y canales",
+        "Comprar más equipos sin cambiar la forma de trabajar",
+        "Usar redes sociales solo para publicidad",
+        "Migrar todos los sistemas a la nube sin cambios internos"
+      ],
+      "correct": 0,
+      "explanation": "La transformación digital se entiende como la integración de tecnología digital en todas las áreas y actividades de la organización.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 2,
+      "text": "Desde la perspectiva de las diapositivas, ¿qué distingue a la verdadera transformación digital?",
+      "type": "multiple",
+      "options": [
+        "Se centra en software sin tocar la cultura",
+        "Implica un cambio cultural y estratégico en toda la organización",
+        "Solo automatiza tareas del área de TI",
+        "Se limita a agregar nuevos canales de venta"
+      ],
+      "correct": 1,
+      "explanation": "Se indica explícitamente que transformación digital es un cambio cultural y estratégico que afecta a toda la organización y a sus stakeholders.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 3,
+      "text": "¿Por qué se afirma que digitalizar no es lo mismo que transformar digitalmente?",
+      "type": "multiple",
+      "options": [
+        "Digitalizar solo cambia el formato de la información",
+        "Digitalizar siempre requiere más presupuesto",
+        "Digitalizar elimina el contacto con el cliente",
+        "Digitalizar solo aplica en empresas pequeñas"
+      ],
+      "correct": 0,
+      "explanation": "Digitalizar se refiere a pasar de físico a digital; transformación digital es un proceso de cambio más amplio para competir con empresas nativas digitales.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 4,
+      "text": "En relación con los clientes, ¿qué objetivo persigue la transformación digital?",
+      "type": "multiple",
+      "options": [
+        "Aumentar barreras para contactar con la empresa",
+        "Unificar todos los clientes en un grupo único",
+        "Alinear lo que la empresa ofrece con lo que desean los clientes digitales",
+        "Reducir la cantidad de información disponible sobre clientes"
+      ],
+      "correct": 2,
+      "explanation": "Se menciona que la transformación digital ayuda a construir un puente entre lo que desean los clientes digitales y lo que los negocios pueden ofrecer.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 5,
+      "text": "En las diapositivas, ¿qué factor aparece como un gran acelerador de la transformación digital?",
+      "type": "multiple",
+      "options": [
+        "El equipo de TI interno",
+        "El CEO de la organización",
+        "La pandemia de COVID-19",
+        "La reducción de la competencia"
+      ],
+      "correct": 2,
+      "explanation": "En la lámina “¿Quién aceleró la transformación digital en la empresa?” se incluye explícitamente al coronavirus como acelerador.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 6,
+      "text": "En el contexto de tecnología disruptiva, ¿qué se presenta como una gran oportunidad para los negocios?",
+      "type": "multiple",
+      "options": [
+        "La tecnología como agente disruptivo en los modelos de negocio",
+        "La reducción de los requisitos de los clientes",
+        "La eliminación de la competencia internacional",
+        "La estabilidad total de las regulaciones"
+      ],
+      "correct": 0,
+      "explanation": "Se menciona la tecnología como agente disruptivo en los modelos de negocio como una de las principales oportunidades.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 7,
+      "text": "Según las diapositivas, ¿qué tipo de factor se percibe como la mayor fuente de amenazas para las empresas?",
+      "type": "multiple",
+      "options": [
+        "La expansión a mercados emergentes",
+        "La consolidación de industrias",
+        "Los cambios regulatorios",
+        "La mayor competencia percibida como oportunidad"
+      ],
+      "correct": 2,
+      "explanation": "Los cambios regulatorios se indican como la mayor carga de amenazas por los riesgos y costos que pueden implicar.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 8,
+      "text": "¿Qué idea clave transmite el escenario competitivo descrito para la inteligencia de negocios?",
+      "type": "multiple",
+      "options": [
+        "Los mercados se vuelven más simples y estables",
+        "La globalización reduce la importancia de la información",
+        "El tiempo es dinero y la información se vuelve arma competitiva",
+        "Las decisiones solo se toman en la alta dirección"
+      ],
+      "correct": 2,
+      "explanation": "Se muestran conceptos como globalización, competencia, tiempo es dinero e información como arma competitiva y decisiones a todos los niveles.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 9,
+      "text": "¿Cuál es la definición de Business Intelligence según las diapositivas?",
+      "type": "multiple",
+      "options": [
+        "Conjunto de bases de datos operacionales",
+        "Proceso de convertir datos en conocimiento y conocimiento en acciones",
+        "Sistema para almacenar reportes históricos",
+        "Técnica para diseñar redes de computadores"
+      ],
+      "correct": 1,
+      "explanation": "The Data Warehousing Institute define BI como el proceso de convertir datos en conocimiento y conocimiento en acciones para crear ventaja competitiva.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 10,
+      "text": "Según Gartner, ¿qué característica importante se atribuye a la inteligencia de negocios?",
+      "type": "multiple",
+      "options": [
+        "Es una herramienta opcional para empresas pequeñas",
+        "Es solo un conjunto de herramientas tecnológicas",
+        "Es crítica para el éxito y la sobrevivencia de la organización",
+        "Es un complemento decorativo para presentaciones"
+      ],
+      "correct": 2,
+      "explanation": "Gartner indica que Business Intelligence es una herramienta crítica para el éxito y la sobrevivencia de la organización.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 11,
+      "text": "En el esquema 'Qué, Cómo, Para qué' de la inteligencia de negocios, ¿qué representa el 'Qué'?",
+      "type": "multiple",
+      "options": [
+        "Conjunto de metodologías, aplicaciones y tecnologías",
+        "Lista de indicadores financieros",
+        "Herramientas de comunicación interna",
+        "Plan de marketing anual"
+      ],
+      "correct": 0,
+      "explanation": "El 'Qué' se refiere al conjunto de metodologías, aplicaciones y tecnologías asociadas a BI.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 12,
+      "text": "En ese mismo esquema, ¿qué describe el 'Cómo' dentro de la inteligencia de negocios?",
+      "type": "multiple",
+      "options": [
+        "Reunir, depurar y transformar datos en información estructurada",
+        "Definir la misión y visión de la empresa",
+        "Establecer la estructura organizativa",
+        "Diseñar campañas de publicidad"
+      ],
+      "correct": 0,
+      "explanation": "El 'Cómo' se explica como el proceso de reunir, depurar y transformar datos de sistemas transaccionales e información desestructurada en información estructurada.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 13,
+      "text": "Dentro del esquema de BI, ¿qué expresa el 'Para qué'?",
+      "type": "multiple",
+      "options": [
+        "Clasificar datos sin ningún uso posterior",
+        "Explotar la información y apoyar la toma de decisiones",
+        "Definir la política de recursos humanos",
+        "Reducir el número de sistemas de información"
+      ],
+      "correct": 1,
+      "explanation": "El 'Para qué' señala la explotación de la información y su uso en la toma de decisiones sobre el negocio.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 14,
+      "text": "En la cadena 'datos, información, conocimiento', ¿qué transforma datos en información?",
+      "type": "multiple",
+      "options": [
+        "El contexto y la organización de los datos",
+        "El tipo de hardware utilizado",
+        "El número de usuarios del sistema",
+        "El tamaño físico de la base de datos"
+      ],
+      "correct": 0,
+      "explanation": "Los datos se convierten en información cuando se organizan, agregan y se les da contexto para que tengan significado.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 15,
+      "text": "¿Qué pregunta ilustra la importancia de conocer a los mejores clientes según las diapositivas?",
+      "type": "multiple",
+      "options": [
+        "¿Cuántos empleados tiene la empresa?",
+        "¿Qué productos compran sus mejores clientes y cómo responden a sus promociones?",
+        "¿Cuántos proveedores existen en la cadena?",
+        "¿Cuántos años tiene cada sucursal?"
+      ],
+      "correct": 1,
+      "explanation": "Se pregunta explícitamente si se conocen los productos que compran los mejores clientes y su respuesta a promociones y campañas.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 16,
+      "text": "En el área de ventas, ¿qué tipo de dato se muestra como ejemplo de información relevante?",
+      "type": "multiple",
+      "options": [
+        "Tamaño de las oficinas",
+        "Número de pedidos y clientes más rentables",
+        "Número de impresoras instaladas",
+        "Cantidad de puestos de estacionamiento"
+      ],
+      "correct": 1,
+      "explanation": "Se listan datos como número de pedidos, productos pedidos y clientes más rentables como ejemplos en ventas.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 17,
+      "text": "En el área de marketing, ¿qué aspecto se usa como ejemplo para análisis con inteligencia de negocios?",
+      "type": "multiple",
+      "options": [
+        "Tamaño de la fuerza de ventas",
+        "Porcentaje de éxito de campañas y tipo de clientes que responden mejor",
+        "Costo de mantenimiento de edificios",
+        "Cantidad de vehículos comerciales"
+      ],
+      "correct": 1,
+      "explanation": "Se incluyen ejemplos como el porcentaje de éxito de campañas y los tipos de clientes que responden mejor a cada una.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 18,
+      "text": "En el área de distribución, ¿qué indicador se menciona para evaluar desempeño?",
+      "type": "multiple",
+      "options": [
+        "Tiempo medio de entrega",
+        "Número de reuniones internas",
+        "Cantidad de sucursales por país",
+        "Número de campañas publicitarias"
+      ],
+      "correct": 0,
+      "explanation": "Se menciona tiempo medio de entrega y distribuidor con mayor número de retrasos como datos relevantes de distribución.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 19,
+      "text": "¿Qué idea clave subraya el ejemplo del directivo de Pepsi sobre información de ventas?",
+      "type": "multiple",
+      "options": [
+        "La importancia de reducir el detalle de la información",
+        "El valor de acceder a distintos niveles de detalle para entender mejor las ventas",
+        "La conveniencia de mirar solo el total de ventas anuales",
+        "La necesidad de eliminar datos históricos"
+      ],
+      "correct": 1,
+      "explanation": "El ejemplo muestra cómo pasar de un dato agregado a un detalle por región, tienda, pasillo y día muestra el poder de la información.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 20,
+      "text": "Conceptualmente, ¿qué caracteriza a un entorno OLTP dentro de la arquitectura de BI?",
+      "type": "multiple",
+      "options": [
+        "Consultas complejas sobre grandes volúmenes históricos",
+        "Altas, bajas, modificaciones y consultas rápidas en operaciones diarias",
+        "Solo informes de largo plazo",
+        "Simulaciones estratégicas y escenarios"
+      ],
+      "correct": 1,
+      "explanation": "OLTP define el comportamiento habitual de un entorno operacional de gestión con transacciones rápidas y alto nivel de concurrencia.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 21,
+      "text": "¿Qué rasgo define a un entorno OLAP según las diapositivas?",
+      "type": "multiple",
+      "options": [
+        "Consultas rápidas y escuetas",
+        "Gran volumen de información histórica y consultas pesadas",
+        "Registro de transacciones simples",
+        "Procesos de captura de datos en tiempo real"
+      ],
+      "correct": 1,
+      "explanation": "OLAP se describe como un entorno de solo consulta, con consultas pesadas, no predecibles y gran volumen de información histórica.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 22,
+      "text": "En el análisis jerárquico de la información, ¿qué nivel se relaciona con la alta dirección?",
+      "type": "multiple",
+      "options": [
+        "Nivel operativo",
+        "Nivel táctico",
+        "Nivel estratégico",
+        "Nivel transaccional"
+      ],
+      "correct": 2,
+      "explanation": "El esquema ubica a la alta dirección en el nivel estratégico, por encima de los niveles táctico y operativo.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 23,
+      "text": "En ese mismo esquema jerárquico, ¿qué tipo de usuario se asocia al nivel operativo?",
+      "type": "multiple",
+      "options": [
+        "Alta dirección",
+        "Gerentes y jefes de línea",
+        "Personal que trabaja en el día a día",
+        "Clientes externos"
+      ],
+      "correct": 2,
+      "explanation": "Se muestra al personal operativo del día a día en el nivel operativo de la jerarquía de información.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 24,
+      "text": "En la arquitectura de una solución BI, ¿qué papel cumplen los sistemas transaccionales?",
+      "type": "multiple",
+      "options": [
+        "Son la fuente de datos que alimenta los repositorios de información",
+        "Solo sirven como respaldo de documentos físicos",
+        "Reemplazan a los repositorios analíticos",
+        "Se usan exclusivamente para informes de auditoría"
+      ],
+      "correct": 0,
+      "explanation": "El esquema muestra sistemas transaccionales como origen de los datos que se integran en los repositorios de información.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 25,
+      "text": "En esa misma arquitectura, ¿qué representan los repositorios de información como data warehouse o data mart?",
+      "type": "multiple",
+      "options": [
+        "Almacenes orientados al análisis de datos integrados",
+        "Copias de seguridad temporales",
+        "Tablas de configuración de sistemas operativos",
+        "Registros de accesos de red"
+      ],
+      "correct": 0,
+      "explanation": "Los repositorios de información multidimensional guardan datos integrados orientados al análisis y al soporte de decisiones.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 26,
+      "text": "Dentro del diseño conceptual de una solución BI, ¿qué pregunta se plantea sobre la información requerida?",
+      "type": "multiple",
+      "options": [
+        "¿Cuál es la información necesaria para gestionar y decidir?",
+        "¿Qué marca de servidores se utilizará?",
+        "¿Cuántos usuarios trabajarán en la red local?",
+        "¿Qué tamaño tendrán las pantallas?"
+      ],
+      "correct": 0,
+      "explanation": "Una de las tres preguntas básicas es: ¿cuál es la información requerida para gestionar y tomar decisiones?",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 27,
+      "text": "En el mismo conjunto de preguntas, ¿qué se cuestiona sobre el formato de los datos?",
+      "type": "multiple",
+      "options": [
+        "¿Qué estilo visual tendrán los informes?",
+        "¿Cuál debe ser el formato y la composición de los datos a utilizar?",
+        "¿Qué tamaño máximo tendrá la base de datos?",
+        "¿Qué idioma se usará en los reportes?"
+      ],
+      "correct": 1,
+      "explanation": "Otra pregunta clave es: ¿cuál debe ser el formato y composición de los datos a utilizar?",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 28,
+      "text": "Finalmente, ¿qué aspecto sobre el origen de los datos se destaca en el diseño conceptual?",
+      "type": "multiple",
+      "options": [
+        "¿De dónde proceden los datos y qué disponibilidad y periodicidad se requiere?",
+        "¿Qué color tendrán los gráficos de los reportes?",
+        "¿Qué sistema operativo se usará en los servidores?",
+        "¿Cuántas impresoras se conectarán a la red?"
+      ],
+      "correct": 0,
+      "explanation": "La tercera pregunta clave trata sobre el origen, disponibilidad y periodicidad de los datos necesarios.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 29,
+      "text": "En el escenario competitivo descrito, ¿qué papel se atribuye al tiempo en las decisiones de negocio?",
+      "type": "multiple",
+      "options": [
+        "Se considera un factor sin impacto",
+        "Se ve como un recurso ilimitado",
+        "Se entiende que tiempo es dinero",
+        "Se ignora en las decisiones estratégicas"
+      ],
+      "correct": 2,
+      "explanation": "El esquema incluye explícitamente la idea de que 'tiempo es dinero' en el escenario competitivo actual.",
+      "points": 100,
+      "timeLimit": 35
+    },
+    {
+      "id": 30,
+      "text": "En conjunto, ¿qué objetivo general persigue la inteligencia de negocios con los datos de la compañía?",
+      "type": "multiple",
+      "options": [
+        "Transformar los datos en conocimiento que genere ventaja competitiva",
+        "Aumentar el volumen de datos sin analizarlos",
+        "Limitar el acceso a la información al nivel operativo",
+        "Reducir la cantidad de información disponible"
+      ],
+      "correct": 0,
+      "explanation": "Se indica que BI persigue transformar los datos en conocimiento para obtener una ventaja competitiva.",
+      "points": 100,
+      "timeLimit": 35
+    }
+  ]
+}

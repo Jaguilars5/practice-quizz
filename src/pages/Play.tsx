@@ -83,8 +83,9 @@ export const Play = () => {
           })
         }
 
-        setTestState(found)
-        setTest(found)
+        const testForStore = found.shuffleQuestions ? { ...found, questions } : found
+        setTestState(testForStore)
+        setTest(testForStore)
         setShuffledQuestions(questions)
         setOptionMaps(maps)
       }

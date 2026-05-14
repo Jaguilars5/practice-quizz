@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
-import { getLocalTests, saveTestToLocal, getTestByCode, getLocalTestByCode } from '../firebase/testsService'
+import { getLocalTests, saveTestToLocal, getTestByCode, getLocalTestByCode, getGlobalTests } from '../firebase/testsService'
 import { hasFirebaseConfig } from '../firebase/config'
 import { TestCard } from '../components/creator/TestCard'
 import { Button } from '../components/ui/Button'
@@ -19,7 +19,25 @@ export const Home = () => {
   const [searchError, setSearchError] = useState('')
 
   useEffect(() => {
-    setTests(getLocalTests())
+    const load = async () => {
+      const local = getLocalTests()
+      if (hasFirebaseConfig) {
+        try {
+          const global = await getGlobalTests()
+          const seen = new Set(local.map(t => t.code))
+          for (const t of global) {
+            if (!seen.has(t.code)) {
+              local.push(t)
+              seen.add(t.code)
+            }
+          }
+        } catch {
+          // fallback: only local
+        }
+      }
+      setTests(local)
+    }
+    load()
   }, [])
 
   if (!user) {
