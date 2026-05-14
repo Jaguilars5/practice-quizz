@@ -47,7 +47,7 @@ export const QuestionCard = ({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="text-xl font-bold text-white"
+        className="text-lg sm:text-xl font-bold text-white leading-snug"
       >
         {question.text}
       </motion.h2>
@@ -84,6 +84,17 @@ export const QuestionCard = ({
           )
         })}
       </div>
+
+      {showResult && question.explanation && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="px-5 py-4 rounded-xl bg-primary-500/10 border border-primary-500/20"
+        >
+          <p className="text-sm text-primary-300 leading-relaxed">{question.explanation}</p>
+        </motion.div>
+      )}
     </motion.div>
   )
 }

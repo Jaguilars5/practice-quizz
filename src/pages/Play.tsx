@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useAuthStore } from '../store/useAuthStore'
 import { useQuizStore } from '../store/useQuizStore'
 import { getLocalTests, getTestById, saveTestToLocal } from '../firebase/testsService'
@@ -34,8 +35,10 @@ export const Play = () => {
   const [timeLeft, setTimeLeft] = useState(0)
   const [selected, setSelected] = useState<number | boolean | null>(null)
   const [showResult, setShowResult] = useState(false)
+  const [showNextButton, setShowNextButton] = useState(false)
   const timerRef = useRef<number>(0)
   const answerTimerRef = useRef<number>(0)
+  const autoAdvanceRef = useRef<number>(0)
   const finishedRef = useRef(false)
 
   const [optionMaps, setOptionMaps] = useState<Record<number, number[]>>({})
@@ -159,16 +162,26 @@ export const Play = () => {
 
     answerQuestion(originalValue, elapsed)
     setShowResult(true)
+    setShowNextButton(true)
 
-    setTimeout(() => {
-      setShowResult(false)
-      setSelected(null)
-      if (currentQuestionIndex + 1 < totalQuestions) {
-        nextQuestion()
-      } else {
-        finishQuiz(user?.email || 'anonimo', user?.displayName || 'Anónimo')
-      }
-    }, 1500)
+    const delay = (test?.autoAdvance ?? 4) * 1000
+    if (delay > 0) {
+      autoAdvanceRef.current = window.setTimeout(() => {
+        advance()
+      }, delay)
+    }
+  }
+
+  const advance = () => {
+    clearTimeout(autoAdvanceRef.current)
+    setShowResult(false)
+    setSelected(null)
+    setShowNextButton(false)
+    if (currentQuestionIndex + 1 < totalQuestions) {
+      nextQuestion()
+    } else {
+      finishQuiz(user?.email || 'anonimo', user?.displayName || 'Anónimo')
+    }
   }
 
   useEffect(() => {
@@ -201,13 +214,13 @@ export const Play = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate('/')}>
+    <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 px-0 sm:px-0">
+      <div className="flex items-center gap-2 sm:gap-4">
+        <Button variant="ghost" onClick={() => navigate('/')} className="shrink-0">
           <ArrowLeft size={18} />
         </Button>
-        <div className="flex-1">
-          <h1 className="text-lg font-bold text-white">{test.title}</h1>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-base sm:text-lg font-bold text-white truncate">{test.title}</h1>
           <ProgressBar current={currentQuestionIndex} total={totalQuestions} />
         </div>
       </div>
@@ -228,6 +241,18 @@ export const Play = () => {
         currentIndex={currentQuestionIndex}
         total={totalQuestions}
       />
+
+      {showNextButton && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-center pt-2"
+        >
+          <Button onClick={advance} size="lg">
+            {currentQuestionIndex + 1 < totalQuestions ? 'Siguiente' : 'Ver resultados'}
+          </Button>
+        </motion.div>
+      )}
     </div>
   )
 }

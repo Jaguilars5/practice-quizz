@@ -24,6 +24,7 @@ export interface Test {
   shuffleQuestions?: boolean
   shuffleOptions?: boolean
   folderId?: string
+  autoAdvance?: number
 }
 
 export interface Folder {

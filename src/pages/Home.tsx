@@ -188,39 +188,39 @@ export const Home = () => {
 
       <JsonPasteModal isOpen={showPasteModal} onClose={() => setShowPasteModal(false)} onImport={handlePasteImport} />
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-white">QuizzY</h1>
-          <p className="text-gray-400 mt-1">Juega y aprende con amigos</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">QuizzY</h1>
+          <p className="text-gray-400 mt-1 text-sm sm:text-base">Juega y aprende con amigos</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="secondary" onClick={() => setShowPasteModal(true)}>
-            <ClipboardPaste size={16} /> Pegar JSON
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="secondary" size="sm" onClick={() => setShowPasteModal(true)} className="text-xs sm:text-sm">
+            <ClipboardPaste size={14} /> Pegar JSON
           </Button>
-          <JsonImporter onImport={handleImport} />
-          <Button onClick={() => navigate('/creator')}>
-            <Plus size={18} /> Crear test
+          <span className="hidden sm:inline"><JsonImporter onImport={handleImport} /></span>
+          <Button size="sm" onClick={() => navigate('/creator')} className="text-xs sm:text-sm">
+            <Plus size={14} /> Crear
           </Button>
         </div>
       </div>
 
-      <Card className="space-y-3">
-        <div className="flex gap-3">
+      <Card className="space-y-3 p-4 sm:p-6">
+        <div className="flex gap-2 sm:gap-3">
           <div className="flex-1 relative">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
               value={searchCode}
               onChange={(e) => setSearchCode(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="Ingresa el código del test (ej: ABC123)"
+              placeholder="Código (ej: ABC123)"
               maxLength={6}
-              className="w-full bg-gray-800 border border-gray-700 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-500 font-mono tracking-widest text-lg uppercase focus:outline-none focus:border-primary-500"
+              className="w-full bg-gray-800 border border-gray-700 rounded-xl pl-9 pr-3 py-2.5 sm:py-3 text-white placeholder-gray-500 font-mono tracking-widest text-base uppercase focus:outline-none focus:border-primary-500"
             />
           </div>
-          <Button onClick={handleSearch} disabled={searching || !searchCode.trim()}>
-            {searching ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
-            Buscar
+          <Button onClick={handleSearch} disabled={searching || !searchCode.trim()} className="shrink-0">
+            {searching ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+            <span className="hidden sm:inline">Buscar</span>
           </Button>
         </div>
         {searchError && (
@@ -231,9 +231,36 @@ export const Home = () => {
         )}
       </Card>
 
-      <div className="flex gap-6">
-        <div className="w-56 shrink-0">
-          <Card className="p-3 sticky top-24">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+        <div className="md:w-48 shrink-0">
+          <details className="md:hidden">
+            <summary className="text-sm text-gray-400 cursor-pointer mb-2 select-none">Carpetas ▸</summary>
+            <Card className="p-3">
+              <FolderList
+                folders={foldersWithCounts}
+                activeFolder={activeFolder}
+                onSelectFolder={(id) => { setActiveFolder(id); }}
+                onRenameFolder={async (id, name) => { await renameFolder(id, name); refreshFolders() }}
+                onDeleteFolder={async (id) => { await deleteFolder(id); refreshFolders(); setTests(getLocalTests()); if (activeFolder === id) setActiveFolder(null) }}
+                onNewFolder={() => setShowNewFolder(!showNewFolder)}
+              />
+              {showNewFolder && (
+                <div className="flex gap-1 mt-2">
+                  <input value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()} placeholder="Nombre" className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary-500" autoFocus />
+                  <Button size="sm" onClick={handleCreateFolder}>OK</Button>
+                </div>
+              )}
+              {folders.length > 0 && (
+                <button onClick={() => setActiveFolder('__uncategorized')} className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all mt-1 ${activeFolder === '__uncategorized' ? 'bg-primary-500/10 text-primary-300' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}>
+                  <FolderOpen size={16} />
+                  <span className="flex-1 text-left">Sin carpeta</span>
+                  <span className="text-xs text-gray-500">{uncategorizedCount}</span>
+                </button>
+              )}
+            </Card>
+          </details>
+          <div className="hidden md:block">
+            <Card className="p-3 sticky top-24">
             <FolderList
               folders={foldersWithCounts}
               activeFolder={activeFolder}
@@ -244,30 +271,19 @@ export const Home = () => {
             />
             {showNewFolder && (
               <div className="flex gap-1 mt-2">
-                <input
-                  value={newFolderName}
-                  onChange={(e) => setNewFolderName(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()}
-                  placeholder="Nombre"
-                  className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
-                  autoFocus
-                />
+                <input value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()} placeholder="Nombre" className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary-500" autoFocus />
                 <Button size="sm" onClick={handleCreateFolder}>OK</Button>
               </div>
             )}
             {folders.length > 0 && (
-              <button
-                onClick={() => setActiveFolder('__uncategorized')}
-                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all mt-1 ${
-                  activeFolder === '__uncategorized' ? 'bg-primary-500/10 text-primary-300' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-                }`}
-              >
+              <button onClick={() => setActiveFolder('__uncategorized')} className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all mt-1 ${activeFolder === '__uncategorized' ? 'bg-primary-500/10 text-primary-300' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`}>
                 <FolderOpen size={16} />
                 <span className="flex-1 text-left">Sin carpeta</span>
                 <span className="text-xs text-gray-500">{uncategorizedCount}</span>
               </button>
             )}
           </Card>
+        </div>
         </div>
 
         <div className="flex-1 min-w-0">

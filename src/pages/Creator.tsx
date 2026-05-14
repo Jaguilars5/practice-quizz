@@ -51,6 +51,7 @@ export const Creator = () => {
   const [code, setCode] = useState(generateCode())
   const [shuffleQuestions, setShuffleQuestions] = useState(false)
   const [shuffleOptions, setShuffleOptions] = useState(false)
+  const [autoAdvance, setAutoAdvance] = useState(4)
   const [folderId, setFolderId] = useState<string | undefined>(undefined)
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
@@ -68,6 +69,7 @@ export const Creator = () => {
       setCode(editTest.code || generateCode())
       setShuffleQuestions(editTest.shuffleQuestions || false)
       setShuffleOptions(editTest.shuffleOptions || false)
+      setAutoAdvance(editTest.autoAdvance ?? 4)
       setFolderId(editTest.folderId || undefined)
       setLoaded(true)
     }
@@ -103,6 +105,7 @@ export const Creator = () => {
     setCode(test.code || generateCode())
     setShuffleQuestions(test.shuffleQuestions || false)
     setShuffleOptions(test.shuffleOptions || false)
+    setAutoAdvance(test.autoAdvance ?? 4)
     setLoaded(true)
   }
 
@@ -140,6 +143,7 @@ export const Creator = () => {
       code,
       shuffleQuestions,
       shuffleOptions,
+      autoAdvance,
       folderId,
     }
 
@@ -172,20 +176,20 @@ export const Creator = () => {
     <div className="max-w-3xl mx-auto space-y-6">
       <JsonPasteModal isOpen={showPasteModal} onClose={() => setShowPasteModal(false)} onImport={handlePasteImport} />
 
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate('/')}>
+      <div className="flex items-center gap-2 sm:gap-4">
+        <Button variant="ghost" onClick={() => navigate('/')} className="shrink-0">
           <ArrowLeft size={18} />
         </Button>
-        <h1 className="text-2xl font-bold text-white">{editTest ? 'Editar test' : 'Crear test'}</h1>
-        <div className="ml-auto flex gap-2">
-          <Button variant="secondary" size="sm" onClick={() => setShowPasteModal(true)}>
-            <ClipboardPaste size={14} /> Pegar JSON
+        <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{editTest ? 'Editar test' : 'Crear test'}</h1>
+        <div className="ml-auto flex gap-1 sm:gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setShowPasteModal(true)} className="text-xs px-2 sm:px-3">
+            <ClipboardPaste size={14} /> <span className="hidden sm:inline">Pegar JSON</span>
           </Button>
-          <JsonImporter onImport={handleImport} />
+          <span className="sm:inline"><JsonImporter onImport={handleImport} /></span>
         </div>
       </div>
 
-      <Card className="space-y-4">
+      <Card className="space-y-4 p-4 sm:p-6">
         <input
           type="text"
           value={title}
@@ -308,6 +312,24 @@ export const Creator = () => {
               <Shuffle size={16} />
               Opciones al azar
             </button>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-800 pt-4">
+          <label className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Auto-avance</label>
+          <div className="flex items-center gap-3 mt-1">
+            <input
+              type="range"
+              min={0}
+              max={10}
+              step={1}
+              value={autoAdvance}
+              onChange={(e) => setAutoAdvance(Number(e.target.value))}
+              className="flex-1 accent-primary-500"
+            />
+            <span className="text-sm text-white font-mono w-16 text-right">
+              {autoAdvance === 0 ? 'Manual' : `${autoAdvance}s`}
+            </span>
           </div>
         </div>
       </Card>

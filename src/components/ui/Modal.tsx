@@ -25,7 +25,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-gray-900 border border-gray-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl"
+            className="relative bg-gray-900 border border-gray-800 rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-2xl mx-2 sm:mx-0 max-h-[85vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-white">{title}</h2>
