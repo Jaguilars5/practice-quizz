@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 import { useQuizStore } from '../store/useQuizStore'
@@ -9,7 +9,16 @@ import { QuestionCard } from '../components/quiz/QuestionCard'
 import { ProgressBar } from '../components/quiz/ProgressBar'
 import { Button } from '../components/ui/Button'
 import { ArrowLeft, Zap, Loader2 } from 'lucide-react'
-import type { Test } from '../types'
+import type { Test, Question } from '../types'
+
+const shuffle = <T,>(arr: T[]): T[] => {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
 export const Play = () => {
   const { testId } = useParams<{ testId: string }>()
@@ -28,6 +37,9 @@ export const Play = () => {
   const timerRef = useRef<number>(0)
   const answerTimerRef = useRef<number>(0)
   const finishedRef = useRef(false)
+
+  const [optionMaps, setOptionMaps] = useState<Record<number, number[]>>({})
+  const [shuffledQuestions, setShuffledQuestions] = useState<Question[] | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -52,8 +64,28 @@ export const Play = () => {
       }
 
       if (found) {
+        let questions = [...found.questions]
+        const maps: Record<number, number[]> = {}
+
+        if (found.shuffleQuestions) {
+          questions = shuffle(questions)
+        }
+
+        if (found.shuffleOptions) {
+          questions = questions.map(q => {
+            if (q.type === 'multiple' && q.options && q.options.length > 0) {
+              const indices = q.options.map((_, i) => i)
+              const shuffled = shuffle(indices)
+              maps[q.id] = shuffled
+            }
+            return q
+          })
+        }
+
         setTestState(found)
         setTest(found)
+        setShuffledQuestions(questions)
+        setOptionMaps(maps)
       }
       setLoading(false)
     }
@@ -65,11 +97,27 @@ export const Play = () => {
     if (test) startQuiz()
   }, [test, startQuiz])
 
-  const currentQuestion = test?.questions[currentQuestionIndex]
+  const originalQuestion = (shuffledQuestions || test?.questions || [])[currentQuestionIndex]
+
+  const displayQuestion: Question | null = useMemo(() => {
+    if (!originalQuestion) return null
+    if (!originalQuestion || originalQuestion.type !== 'multiple' || !optionMaps[originalQuestion.id]) {
+      return originalQuestion
+    }
+    const map = optionMaps[originalQuestion.id]
+    const opts = originalQuestion.options || []
+    return {
+      ...originalQuestion,
+      options: map.map(i => opts[i]),
+      correct: map.indexOf(originalQuestion.correct as number),
+    }
+  }, [originalQuestion, optionMaps])
+
+  const totalQuestions = shuffledQuestions?.length || test?.questions.length || 0
 
   const startTimer = useCallback(() => {
-    if (!currentQuestion) return
-    setTimeLeft(currentQuestion.timeLimit)
+    if (!displayQuestion) return
+    setTimeLeft(displayQuestion.timeLimit)
     setSelected(null)
     setShowResult(false)
 
@@ -78,14 +126,14 @@ export const Play = () => {
 
     timerRef.current = window.setInterval(() => {
       const elapsed = Math.floor((Date.now() - start) / 1000)
-      const left = currentQuestion.timeLimit - elapsed
+      const left = displayQuestion.timeLimit - elapsed
       setTimeLeft(Math.max(0, left))
       if (left <= 0) {
         clearInterval(timerRef.current)
         handleAnswer(null)
       }
     }, 100)
-  }, [currentQuestion])
+  }, [displayQuestion])
 
   useEffect(() => {
     startTimer()
@@ -93,19 +141,22 @@ export const Play = () => {
   }, [currentQuestionIndex, startTimer])
 
   const handleAnswer = (value: number | boolean | null) => {
-    if (showResult) return
+    if (showResult || !displayQuestion) return
     clearInterval(timerRef.current)
     setSelected(value)
 
-    const elapsed = currentQuestion
-      ? Math.min((Date.now() - answerTimerRef.current) / 1000, currentQuestion.timeLimit)
-      : 0
+    const elapsed = Math.min((Date.now() - answerTimerRef.current) / 1000, displayQuestion.timeLimit)
 
-    answerQuestion(value, elapsed)
+    let originalValue = value
+    if (typeof value === 'number' && optionMaps[displayQuestion.id]) {
+      originalValue = optionMaps[displayQuestion.id][value]
+    }
+
+    answerQuestion(originalValue, elapsed)
     setShowResult(true)
 
     setTimeout(() => {
-      if (test && currentQuestionIndex + 1 < test.questions.length) {
+      if (currentQuestionIndex + 1 < totalQuestions) {
         nextQuestion()
       } else {
         finishQuiz(user?.email || 'anonimo', user?.displayName || 'Anónimo')
@@ -134,7 +185,7 @@ export const Play = () => {
     )
   }
 
-  if (!test || !currentQuestion) {
+  if (!test || !displayQuestion) {
     return (
       <div className="text-center py-20 text-gray-500">
         Test no encontrado
@@ -150,7 +201,7 @@ export const Play = () => {
         </Button>
         <div className="flex-1">
           <h1 className="text-lg font-bold text-white">{test.title}</h1>
-          <ProgressBar current={currentQuestionIndex} total={test.questions.length} />
+          <ProgressBar current={currentQuestionIndex} total={totalQuestions} />
         </div>
       </div>
 
@@ -162,13 +213,13 @@ export const Play = () => {
       )}
 
       <QuestionCard
-        question={currentQuestion}
+        question={displayQuestion}
         selectedAnswer={selected}
         onSelect={handleAnswer}
         timeLeft={timeLeft}
         showResult={showResult}
         currentIndex={currentQuestionIndex}
-        total={test.questions.length}
+        total={totalQuestions}
       />
     </div>
   )

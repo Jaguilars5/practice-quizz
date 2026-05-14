@@ -122,7 +122,7 @@ export const Home = () => {
                 key={test.id}
                 test={test}
                 onPlay={() => navigate(`/play/${test.id}`)}
-                onEdit={() => navigate('/creator', { state: { editTest: test } })}
+                onEdit={test.createdBy === user.email ? () => navigate('/creator', { state: { editTest: test } }) : undefined}
                 showCode
               />
             ))}

@@ -7,7 +7,7 @@ import { QuestionEditor } from '../components/creator/QuestionEditor'
 import { JsonImporter } from '../components/creator/JsonImporter'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { ArrowLeft, Plus, Save, Globe, Lock } from 'lucide-react'
+import { ArrowLeft, Plus, Save, Globe, Lock, Shuffle } from 'lucide-react'
 import type { Test, Question } from '../types'
 
 const generateCode = () => {
@@ -44,6 +44,8 @@ export const Creator = () => {
   const [questions, setQuestions] = useState<Question[]>([emptyQuestion()])
   const [visibility, setVisibility] = useState<'global' | 'private'>('private')
   const [code, setCode] = useState(generateCode())
+  const [shuffleQuestions, setShuffleQuestions] = useState(false)
+  const [shuffleOptions, setShuffleOptions] = useState(false)
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
@@ -57,6 +59,8 @@ export const Creator = () => {
       setQuestions(editTest.questions.map(q => ({ ...q })))
       setVisibility(editTest.visibility || 'private')
       setCode(editTest.code || generateCode())
+      setShuffleQuestions(editTest.shuffleQuestions || false)
+      setShuffleOptions(editTest.shuffleOptions || false)
       setLoaded(true)
     }
   }, [editTest, loaded])
@@ -89,6 +93,8 @@ export const Creator = () => {
     setQuestions(test.questions)
     setVisibility(test.visibility || 'private')
     setCode(test.code || generateCode())
+    setShuffleQuestions(test.shuffleQuestions || false)
+    setShuffleOptions(test.shuffleOptions || false)
     setLoaded(true)
   }
 
@@ -107,6 +113,8 @@ export const Creator = () => {
       questions: questions.map((q, i) => ({ ...q, id: i + 1 })),
       visibility,
       code,
+      shuffleQuestions,
+      shuffleOptions,
     }
 
     if (hasFirebaseConfig) {
@@ -237,6 +245,34 @@ export const Creator = () => {
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-800 pt-4 space-y-3">
+          <label className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Aleatorizar</label>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShuffleQuestions(!shuffleQuestions)}
+              className={`flex-1 flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
+                shuffleQuestions
+                  ? 'border-primary-500 bg-primary-500/10 text-primary-300'
+                  : 'border-gray-700 text-gray-400 hover:border-gray-500'
+              }`}
+            >
+              <Shuffle size={16} />
+              Preguntas al azar
+            </button>
+            <button
+              onClick={() => setShuffleOptions(!shuffleOptions)}
+              className={`flex-1 flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
+                shuffleOptions
+                  ? 'border-primary-500 bg-primary-500/10 text-primary-300'
+                  : 'border-gray-700 text-gray-400 hover:border-gray-500'
+              }`}
+            >
+              <Shuffle size={16} />
+              Opciones al azar
+            </button>
           </div>
         </div>
       </Card>

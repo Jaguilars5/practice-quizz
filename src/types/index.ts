@@ -21,6 +21,8 @@ export interface Test {
   questions: Question[]
   visibility: 'global' | 'private'
   code: string
+  shuffleQuestions?: boolean
+  shuffleOptions?: boolean
 }
 
 export interface PlayerAnswer {
