@@ -40,6 +40,7 @@ export const Play = () => {
 
   const [optionMaps, setOptionMaps] = useState<Record<number, number[]>>({})
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[] | null>(null)
+  const initializedRef = useRef(false)
 
   useEffect(() => {
     if (!user) {
@@ -94,7 +95,10 @@ export const Play = () => {
   }, [testId, user, navigate, setTest])
 
   useEffect(() => {
-    if (test) startQuiz()
+    if (test) {
+      initializedRef.current = true
+      startQuiz()
+    }
   }, [test, startQuiz])
 
   const originalQuestion = (shuffledQuestions || test?.questions || [])[currentQuestionIndex]
@@ -165,7 +169,7 @@ export const Play = () => {
   }
 
   useEffect(() => {
-    if (isFinished && !finishedRef.current) {
+    if (isFinished && !finishedRef.current && initializedRef.current) {
       finishedRef.current = true
       const result = finishQuiz(user?.email || 'anonimo', user?.displayName || 'Anónimo')
       if (hasFirebaseConfig) {
