@@ -11,6 +11,9 @@ import { Play } from './pages/Play'
 import { Results } from './pages/Results'
 import { Leaderboard } from './pages/Leaderboard'
 import { MyAnswers } from './pages/MyAnswers'
+import { FlashcardsHome } from './pages/FlashcardsHome'
+import { FlashcardCreator } from './pages/FlashcardCreator'
+import { FlashcardStudy } from './pages/FlashcardStudy'
 
 const AnimatedRoutes = () => {
   const location = useLocation()
@@ -31,6 +34,9 @@ const AnimatedRoutes = () => {
           <Route path="/results" element={<Results />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/mis-respuestas" element={<MyAnswers />} />
+          <Route path="/flashcards" element={<FlashcardsHome />} />
+          <Route path="/flashcards/crear" element={<FlashcardCreator />} />
+          <Route path="/flashcards/study/:setId" element={<FlashcardStudy />} />
         </Routes>
       </motion.div>
     </AnimatePresence>

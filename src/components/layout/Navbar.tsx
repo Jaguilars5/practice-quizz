@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '../../store/useAuthStore'
 import { logout } from '../../firebase/authService'
 import { Button } from '../ui/Button'
-import { LogOut, User, ClipboardList, Menu, X, Plus, Trophy } from 'lucide-react'
+import { LogOut, User, ClipboardList, Menu, X, Plus, Trophy, BookOpen } from 'lucide-react'
 
 export const Navbar = () => {
   const { user } = useAuthStore()
@@ -18,6 +18,7 @@ export const Navbar = () => {
 
   const navLinks = user ? [
     { to: '/creator', label: 'Crear', icon: Plus },
+    { to: '/flashcards', label: 'Flashcards', icon: BookOpen },
     { to: '/mis-respuestas', label: 'Respuestas', icon: ClipboardList },
     { to: '/leaderboard', label: 'Ranking', icon: Trophy },
   ] : []
@@ -41,6 +42,10 @@ export const Navbar = () => {
             <>
               <div className="hidden sm:flex items-center gap-4">
                 <Link to="/creator" className={linkClass('/creator')}>Crear</Link>
+                <Link to="/flashcards" className={`${linkClass('/flashcards')} flex items-center gap-1`}>
+                  <BookOpen size={16} />
+                  <span className="hidden sm:inline">Flashcards</span>
+                </Link>
                 <Link to="/mis-respuestas" className={`${linkClass('/mis-respuestas')} flex items-center gap-1`}>
                   <ClipboardList size={16} />
                   <span className="hidden sm:inline">Mis respuestas</span>

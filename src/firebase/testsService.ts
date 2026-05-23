@@ -40,6 +40,12 @@ export const getTestByCode = async (code: string): Promise<Test | null> => {
   return { ...d.data(), id: d.id } as Test
 }
 
+export const getTestsByFolderId = async (folderId: string): Promise<Test[]> => {
+  const q = query(testsRef(), where('folderId', '==', folderId))
+  const snapshot = await getDocs(q)
+  return snapshot.docs.map(d => ({ ...d.data(), id: d.id } as Test))
+}
+
 export const createTest = async (test: Omit<Test, 'id'>): Promise<string> => {
   const ref = await addDoc(testsRef(), test)
   return ref.id

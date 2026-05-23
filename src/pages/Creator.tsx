@@ -6,11 +6,13 @@ import { hasFirebaseConfig } from '../firebase/config'
 import { QuestionEditor } from '../components/creator/QuestionEditor'
 import { JsonImporter } from '../components/creator/JsonImporter'
 import { JsonPasteModal } from '../components/ui/JsonPasteModal'
+import { JsonEditorModal } from '../components/ui/JsonEditorModal'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { FolderSelect } from '../components/ui/FolderSelect'
 import { importTestFromJson } from '../utils/jsonImporter'
-import { ArrowLeft, Plus, Save, Globe, Lock, Shuffle, ClipboardPaste, FileDown } from 'lucide-react'
+import { exportTestAsJson } from '../utils/jsonExporter'
+import { ArrowLeft, Plus, Save, Globe, Lock, Shuffle, ClipboardPaste, FileDown, Code, Copy, CheckCheck } from 'lucide-react'
 import type { Test, Question } from '../types'
 
 const generateCode = () => {
@@ -56,6 +58,34 @@ export const Creator = () => {
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [showPasteModal, setShowPasteModal] = useState(false)
+  const [showJsonEditor, setShowJsonEditor] = useState(false)
+  const [exampleCopied, setExampleCopied] = useState(false)
+
+  const handleCopyExampleJson = () => {
+    const example = {
+      title: 'Mi test',
+      description: 'Descripción opcional',
+      category: 'General',
+      difficulty: 'medio',
+      timePerQuestion: 20,
+      visibility: 'private',
+      code: 'ABC123',
+      questions: [
+        {
+          text: '¿En qué año...?',
+          type: 'multiple',
+          options: ['Opción 1', 'Opción 2', 'Opción 3', 'Opción 4'],
+          correct: 0,
+          explanation: 'Explicación opcional',
+          points: 100,
+          timeLimit: 20,
+        },
+      ],
+    }
+    navigator.clipboard.writeText(JSON.stringify(example, null, 2))
+    setExampleCopied(true)
+    setTimeout(() => setExampleCopied(false), 2000)
+  }
 
   useEffect(() => {
     if (editTest && !loaded) {
@@ -112,6 +142,41 @@ export const Creator = () => {
   const handlePasteImport = (test: Test) => {
     // Same as file import: replace current test with pasted data
     handleImport(test)
+  }
+
+  const handleExportJson = () => {
+    const test: Test = {
+      id: editTest?.id || `test_${Date.now()}`,
+      title: title.trim(),
+      description: description.trim(),
+      category,
+      difficulty,
+      timePerQuestion,
+      createdBy: user.email,
+      createdAt: new Date().toISOString(),
+      questions: questions.map((q, i) => ({ ...q, id: i + 1 })),
+      visibility,
+      code,
+      shuffleQuestions,
+      shuffleOptions,
+      autoAdvance,
+      folderId,
+    }
+    exportTestAsJson(test)
+  }
+
+  const handleJsonApply = (test: Omit<Test, 'id'>) => {
+    setTitle(test.title)
+    setDescription(test.description)
+    setCategory(test.category)
+    setDifficulty(test.difficulty)
+    setTimePerQuestion(test.timePerQuestion)
+    setQuestions(test.questions.map(q => ({ ...q, id: questionIdCounter++ })))
+    setVisibility(test.visibility || 'private')
+    setCode(test.code || generateCode())
+    setShuffleQuestions(test.shuffleQuestions || false)
+    setShuffleOptions(test.shuffleOptions || false)
+    setAutoAdvance(test.autoAdvance ?? 4)
   }
 
   const handleImportQuestions = async () => {
@@ -175,6 +240,13 @@ export const Creator = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <JsonPasteModal isOpen={showPasteModal} onClose={() => setShowPasteModal(false)} onImport={handlePasteImport} />
+      <JsonEditorModal isOpen={showJsonEditor} onClose={() => setShowJsonEditor(false)} testData={{
+        title, description, category, difficulty, timePerQuestion,
+        createdBy: user.email,
+        createdAt: new Date().toISOString(),
+        questions,
+        visibility, code, shuffleQuestions, shuffleOptions, autoAdvance, folderId,
+      }} onApply={handleJsonApply} />
 
       <div className="flex items-center gap-2 sm:gap-4">
         <Button variant="ghost" onClick={() => navigate('/')} className="shrink-0">
@@ -182,6 +254,9 @@ export const Creator = () => {
         </Button>
         <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{editTest ? 'Editar test' : 'Crear test'}</h1>
         <div className="ml-auto flex gap-1 sm:gap-2">
+          <Button variant="secondary" size="sm" onClick={handleExportJson} className="text-xs px-2 sm:px-3">
+            <FileDown size={14} /> <span className="hidden sm:inline">Exportar JSON</span>
+          </Button>
           <Button variant="secondary" size="sm" onClick={() => setShowPasteModal(true)} className="text-xs px-2 sm:px-3">
             <ClipboardPaste size={14} /> <span className="hidden sm:inline">Pegar JSON</span>
           </Button>
@@ -228,12 +303,16 @@ export const Creator = () => {
           </div>
           <div>
             <label className="text-xs text-gray-500">Tiempo por pregunta (s)</label>
-            <input
-              type="number"
-              value={timePerQuestion}
-              onChange={(e) => setTimePerQuestion(Number(e.target.value))}
-              className="block bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm mt-1 w-20 focus:outline-none focus:border-primary-500"
-            />
+              <input
+                type="number"
+                value={timePerQuestion}
+                onChange={(e) => {
+                  const newTime = Number(e.target.value)
+                  setTimePerQuestion(newTime)
+                  setQuestions(questions.map(q => ({ ...q, timeLimit: newTime })))
+                }}
+                className="block bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm mt-1 w-20 focus:outline-none focus:border-primary-500"
+              />
           </div>
         </div>
 
@@ -338,6 +417,12 @@ export const Creator = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white">Preguntas ({questions.length})</h2>
           <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={handleCopyExampleJson} title="Copiar ejemplo de formato JSON">
+              {exampleCopied ? <CheckCheck size={14} /> : <Copy size={14} />} Ejemplo JSON
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowJsonEditor(true)}>
+              <Code size={14} /> Editar JSON
+            </Button>
             <Button variant="ghost" size="sm" onClick={handleImportQuestions}>
               <FileDown size={14} /> Importar preguntas
             </Button>

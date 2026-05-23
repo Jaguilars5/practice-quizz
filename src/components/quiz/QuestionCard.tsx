@@ -55,7 +55,9 @@ export const QuestionCard = ({
       <div className="space-y-3">
         {options.map((opt, i) => {
           const isSelected = selectedAnswer === i
-          const isCorrectAnswer = question.correct === i
+          const isCorrectAnswer = question.type === 'truefalse'
+            ? (question.correct === true && i === 0) || (question.correct === false && i === 1)
+            : question.correct === i
           const showCorrect = showResult && isCorrectAnswer
           const showWrong = showResult && isSelected && !isCorrectAnswer
 

@@ -2,9 +2,9 @@ import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useAuthStore } from '../store/useAuthStore'
-import { getLocalTests, saveTestToLocal, getTestByCode, getLocalTestByCode, getGlobalTests, getTestsByCreator, deleteTest } from '../firebase/testsService'
+import { getLocalTests, saveTestToLocal, getTestByCode, getLocalTestByCode, getGlobalTests, getTestsByCreator, deleteTest, getTestsByFolderId } from '../firebase/testsService'
 import { hasFirebaseConfig } from '../firebase/config'
-import { getLocalFolders, getFoldersFromFirestore, createFolder, renameFolder, deleteFolder } from '../firebase/folderService'
+import { getLocalFolders, getFoldersFromFirestore, createFolder, renameFolder, deleteFolder, getPublicFoldersFromFirestore, getFolderByCodeFromFirestore, getFolderByCodeLocal, updateFolderVisibility } from '../firebase/folderService'
 import { TestCard } from '../components/creator/TestCard'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
@@ -12,7 +12,7 @@ import { Modal } from '../components/ui/Modal'
 import { JsonImporter } from '../components/creator/JsonImporter'
 import { JsonPasteModal } from '../components/ui/JsonPasteModal'
 import { FolderList } from '../components/ui/FolderList'
-import { Plus, BookOpen, Search, AlertCircle, Loader2, FolderOpen, ClipboardPaste, ArrowUpDown } from 'lucide-react'
+import { Plus, BookOpen, Search, AlertCircle, Loader2, FolderOpen, ClipboardPaste, ArrowUpDown, Globe, KeyRound } from 'lucide-react'
 import type { Test, Folder } from '../types'
 
 export const Home = () => {
@@ -30,6 +30,10 @@ export const Home = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<Test | null>(null)
   const [sortNewest, setSortNewest] = useState(true)
   const [searchTitle, setSearchTitle] = useState('')
+  const [sharedFolderTests, setSharedFolderTests] = useState<Test[]>([])
+  const [folderSearchCode, setFolderSearchCode] = useState('')
+  const [folderSearching, setFolderSearching] = useState(false)
+  const [folderSearchError, setFolderSearchError] = useState('')
 
   const refreshFolders = () => setFolders(getLocalFolders())
 
@@ -39,8 +43,11 @@ export const Home = () => {
       const seen = new Set(local.map(f => f.id))
       if (hasFirebaseConfig) {
         try {
-          const fromFs = await getFoldersFromFirestore(user!.email)
-          for (const f of fromFs) {
+          const [fromFs, publicFolders] = await Promise.all([
+            getFoldersFromFirestore(user!.email),
+            getPublicFoldersFromFirestore(),
+          ])
+          for (const f of [...fromFs, ...publicFolders]) {
             if (!seen.has(f.id)) {
               local.push(f)
               seen.add(f.id)
@@ -80,10 +87,43 @@ export const Home = () => {
     load()
   }, [user])
 
+  useEffect(() => {
+    if (!activeFolder || activeFolder === '__uncategorized') {
+      setSharedFolderTests([])
+      return
+    }
+    const folder = folders.find(f => f.id === activeFolder)
+    if (!folder || folder.createdBy === user!.email) {
+      setSharedFolderTests([])
+      return
+    }
+    const loadShared = async () => {
+      try {
+        const folderTests = await getTestsByFolderId(activeFolder)
+        setSharedFolderTests(folderTests)
+      } catch {
+        setSharedFolderTests([])
+      }
+    }
+    loadShared()
+  }, [activeFolder, folders, user])
+
+  const allTests = useMemo(() => {
+    const seen = new Set(tests.map(t => t.id))
+    const merged = [...tests]
+    for (const t of sharedFolderTests) {
+      if (!seen.has(t.id)) {
+        merged.push(t)
+        seen.add(t.id)
+      }
+    }
+    return merged
+  }, [tests, sharedFolderTests])
+
   const filteredTests = useMemo(() => {
-    let result = !activeFolder ? tests
-      : activeFolder === '__uncategorized' ? tests.filter(t => !t.folderId)
-      : tests.filter(t => t.folderId === activeFolder)
+    let result = !activeFolder ? allTests
+      : activeFolder === '__uncategorized' ? allTests.filter(t => !t.folderId)
+      : allTests.filter(t => t.folderId === activeFolder)
     if (searchTitle.trim()) {
       const q = searchTitle.toLowerCase()
       result = result.filter(t => t.title.toLowerCase().includes(q))
@@ -93,15 +133,15 @@ export const Home = () => {
         ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     )
-  }, [tests, activeFolder, sortNewest, searchTitle])
+  }, [allTests, activeFolder, sortNewest, searchTitle])
 
   const folderCounts = useMemo(() => {
     const counts: Record<string, number> = {}
-    for (const t of tests) {
+    for (const t of allTests) {
       if (t.folderId) counts[t.folderId] = (counts[t.folderId] || 0) + 1
     }
     return counts
-  }, [tests])
+  }, [allTests])
 
   if (!user) {
     navigate('/login')
@@ -176,7 +216,53 @@ export const Home = () => {
     refreshFolders()
   }
 
-  const uncategorizedCount = tests.filter(t => !t.folderId).length
+  const handleJoinFolder = async () => {
+    const code = folderSearchCode.trim().toUpperCase()
+    if (!code) return
+
+    setFolderSearching(true)
+    setFolderSearchError('')
+
+    const local = getFolderByCodeLocal(code)
+    if (local) {
+      setActiveFolder(local.id)
+      setFolderSearchCode('')
+      setFolderSearching(false)
+      return
+    }
+
+    if (hasFirebaseConfig) {
+      try {
+        const found = await getFolderByCodeFromFirestore(code)
+        if (found) {
+          const localFolders = getLocalFolders()
+          if (!localFolders.find(f => f.id === found.id)) {
+            localFolders.push(found)
+            localStorage.setItem('folders', JSON.stringify(localFolders))
+          }
+          setFolders(getLocalFolders())
+          setActiveFolder(found.id)
+          setFolderSearchCode('')
+          setFolderSearching(false)
+          return
+        }
+      } catch {
+        setFolderSearchError('Error al buscar en Firestore')
+        setFolderSearching(false)
+        return
+      }
+    }
+
+    setFolderSearchError('No se encontró ninguna carpeta con ese código')
+    setFolderSearching(false)
+  }
+
+  const handleUpdateFolderVisibility = async (id: string, visibility: 'private' | 'public' | 'code', code?: string) => {
+    await updateFolderVisibility(id, visibility, code)
+    refreshFolders()
+  }
+
+  const uncategorizedCount = allTests.filter(t => !t.folderId).length
 
   const foldersWithCounts = folders.map(f => ({
     ...f,
@@ -246,13 +332,15 @@ export const Home = () => {
         <div className="md:w-48 shrink-0">
           <details className="md:hidden">
             <summary className="text-sm text-gray-400 cursor-pointer mb-2 select-none">Carpetas ▸</summary>
-            <Card className="p-3">
+            <Card className="p-3 space-y-3">
               <FolderList
                 folders={foldersWithCounts}
                 activeFolder={activeFolder}
+                currentUserEmail={user.email}
                 onSelectFolder={(id) => { setActiveFolder(id); }}
                 onRenameFolder={async (id, name) => { await renameFolder(id, name); refreshFolders() }}
                 onDeleteFolder={async (id) => { await deleteFolder(id); refreshFolders(); setTests(getLocalTests()); if (activeFolder === id) setActiveFolder(null) }}
+                onUpdateVisibility={handleUpdateFolderVisibility}
                 onNewFolder={() => setShowNewFolder(!showNewFolder)}
               />
               {showNewFolder && (
@@ -268,16 +356,35 @@ export const Home = () => {
                   <span className="text-xs text-gray-500">{uncategorizedCount}</span>
                 </button>
               )}
+              <div className="border-t border-gray-700 pt-2">
+                <div className="flex gap-1 min-w-0">
+                  <input
+                    type="text"
+                    value={folderSearchCode}
+                    onChange={(e) => setFolderSearchCode(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => e.key === 'Enter' && handleJoinFolder()}
+                    placeholder="Código de carpeta"
+                    maxLength={6}
+                    className="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm text-white placeholder-gray-500 font-mono tracking-wider uppercase focus:outline-none focus:border-primary-500"
+                  />
+                  <Button size="sm" onClick={handleJoinFolder} disabled={folderSearching || !folderSearchCode.trim()} className="shrink-0">
+                    {folderSearching ? <Loader2 size={14} className="animate-spin" /> : <KeyRound size={14} />}
+                  </Button>
+                </div>
+                {folderSearchError && <p className="text-xs text-red-400 mt-1">{folderSearchError}</p>}
+              </div>
             </Card>
           </details>
           <div className="hidden md:block">
-            <Card className="p-3 sticky top-24">
+            <Card className="p-3 sticky top-24 space-y-3">
             <FolderList
               folders={foldersWithCounts}
               activeFolder={activeFolder}
+              currentUserEmail={user.email}
               onSelectFolder={setActiveFolder}
               onRenameFolder={async (id, name) => { await renameFolder(id, name); refreshFolders() }}
               onDeleteFolder={async (id) => { await deleteFolder(id); refreshFolders(); setTests(getLocalTests()); if (activeFolder === id) setActiveFolder(null) }}
+              onUpdateVisibility={handleUpdateFolderVisibility}
               onNewFolder={() => setShowNewFolder(!showNewFolder)}
             />
             {showNewFolder && (
@@ -293,6 +400,23 @@ export const Home = () => {
                 <span className="text-xs text-gray-500">{uncategorizedCount}</span>
               </button>
             )}
+            <div className="border-t border-gray-700 pt-2">
+              <div className="flex gap-1 min-w-0">
+                <input
+                  type="text"
+                  value={folderSearchCode}
+                  onChange={(e) => setFolderSearchCode(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => e.key === 'Enter' && handleJoinFolder()}
+                  placeholder="Código de carpeta"
+                  maxLength={6}
+                  className="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm text-white placeholder-gray-500 font-mono tracking-wider uppercase focus:outline-none focus:border-primary-500"
+                />
+                <Button size="sm" onClick={handleJoinFolder} disabled={folderSearching || !folderSearchCode.trim()} className="shrink-0">
+                  {folderSearching ? <Loader2 size={14} className="animate-spin" /> : <KeyRound size={14} />}
+                </Button>
+              </div>
+              {folderSearchError && <p className="text-xs text-red-400 mt-1">{folderSearchError}</p>}
+            </div>
           </Card>
         </div>
         </div>
@@ -300,9 +424,12 @@ export const Home = () => {
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 {activeFolder
-                  ? folders.find(f => f.id === activeFolder)?.name || 'Sin carpeta'
+                  ? (() => {
+                      const f = folders.find(fo => fo.id === activeFolder)
+                      return f ? <>{f.name} {f.visibility === 'public' ? <Globe size={16} className="text-green-400" /> : f.visibility === 'code' ? <KeyRound size={16} className="text-yellow-400" /> : null}</> : 'Sin carpeta'
+                    })()
                   : 'Tus tests'}
               </h2>
               <div className="relative">

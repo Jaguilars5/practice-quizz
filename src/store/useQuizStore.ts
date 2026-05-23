@@ -16,6 +16,7 @@ interface QuizState {
   startQuiz: () => void
   answerQuestion: (selectedOption: number | boolean | null, timeUsed: number) => void
   nextQuestion: () => void
+  restoreQuiz: (index: number, savedAnswers: PlayerAnswer[], savedStreak: number, savedMaxStreak: number, savedStartTime: number) => void
   finishQuiz: (playerId: string, playerName: string) => AnswerSet
   reset: () => void
 }
@@ -47,9 +48,10 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     if (!currentTest) return
 
     const question = currentTest.questions[currentQuestionIndex]
-    const isCorrect = question.type === 'truefalse'
-      ? selectedOption === question.correct
-      : selectedOption === question.correct
+    if (question.type === 'truefalse') {
+      selectedOption = selectedOption === 0 ? true : selectedOption === 1 ? false : null
+    }
+    const isCorrect = selectedOption === question.correct
 
     const newStreak = isCorrect ? streak + 1 : 0
     const newMaxStreak = Math.max(maxStreak, newStreak)
@@ -83,6 +85,18 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     if (currentQuestionIndex + 1 < currentTest.questions.length) {
       set({ currentQuestionIndex: currentQuestionIndex + 1 })
     }
+  },
+
+  restoreQuiz: (index: number, savedAnswers: PlayerAnswer[], savedStreak: number, savedMaxStreak: number, savedStartTime: number) => {
+    set({
+      currentQuestionIndex: index,
+      answers: savedAnswers,
+      streak: savedStreak,
+      maxStreak: savedMaxStreak,
+      startTime: savedStartTime,
+      isFinished: false,
+      answerSet: null,
+    })
   },
 
   finishQuiz: (playerId, playerName) => {

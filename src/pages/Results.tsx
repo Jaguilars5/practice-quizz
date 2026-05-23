@@ -8,7 +8,7 @@ import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 import { AnswerDetail } from '../components/quiz/AnswerDetail'
 import { exportAnswersAsJson } from '../utils/jsonExporter'
-import { Home, Download, RotateCcw, PartyPopper } from 'lucide-react'
+import { Home, Download, RotateCcw, PartyPopper, Trophy } from 'lucide-react'
 import confetti from 'canvas-confetti'
 import type { AnswerSet } from '../types'
 
@@ -74,6 +74,9 @@ export const Results = () => {
         </Button>
         <Button variant="secondary" onClick={() => navigate(`/play/${answerSet.testId}`)} className="flex-1">
           <RotateCcw size={16} /> Reintentar
+        </Button>
+        <Button variant="secondary" onClick={() => navigate('/leaderboard')} className="flex-1">
+          <Trophy size={16} /> Ranking
         </Button>
         <Button onClick={() => exportAnswersAsJson(answerSet)}>
           <Download size={16} /> Exportar
