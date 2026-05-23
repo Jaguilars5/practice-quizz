@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
@@ -19,7 +20,28 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@app/*": ["src/app/*"],
+      "@quiz/*": ["src/features/quiz/*"],
+      "@quizData": ["src/features/quiz/data/index.ts"],
+      "@quizData/*": ["src/features/quiz/data/*"],
+      "@quizState/*": ["src/features/quiz/state/*"],
+      "@flashcards/*": ["src/features/flashcards/*"],
+      "@flashcardData": ["src/features/flashcards/data/index.ts"],
+      "@flashcardData/*": ["src/features/flashcards/data/*"],
+      "@auth/*": ["src/features/auth/*"],
+      "@authData": ["src/features/auth/data/index.ts"],
+      "@authData/*": ["src/features/auth/data/*"],
+      "@authState/*": ["src/features/auth/state/*"],
+      "@folders/*": ["src/features/folders/*"],
+      "@folderData": ["src/features/folders/data/index.ts"],
+      "@folderData/*": ["src/features/folders/data/*"],
+      "@preferences/*": ["src/features/preferences/*"],
+      "@shared/*": ["src/shared/*"]
+    }
   },
   "include": ["src"]
 }
