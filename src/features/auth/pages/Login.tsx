@@ -1,28 +1,24 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuthStore } from '@authState/useAuthStore'
-import { loginWithGoogle } from '@authData'
-import { Button } from '@shared/components/ui/Button'
-import { Card } from '@shared/components/ui/Card'
-import { LogIn } from 'lucide-react'
+import { logInfo } from "@app/services/errorLogger";
+import { useAuthRedirect } from "@auth/hooks/useAuthRedirect.hook";
+import { loginWithGoogle } from "@auth/services";
+import { useAuthStore } from "@auth/store";
+import { Button } from "@shared/components/ui/Button";
+import { Card } from "@shared/components/ui/Card";
+import { LogIn } from "lucide-react";
 
 export const Login = () => {
-  const { user, loading } = useAuthStore()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (user) navigate('/')
-  }, [user, navigate])
+  const {  loading } = useAuthStore();
+  useAuthRedirect();
 
   const handleLogin = async () => {
     try {
-      await loginWithGoogle()
+      await loginWithGoogle();
     } catch (err) {
-      console.error('Login error:', err)
+      logInfo(`Login error: ${err}`, "auth");
     }
-  }
+  };
 
-  if (loading) return null
+  if (loading) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -39,5 +35,5 @@ export const Login = () => {
         </Button>
       </Card>
     </div>
-  )
-}
+  );
+};

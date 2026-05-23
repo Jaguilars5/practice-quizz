@@ -1,29 +1,29 @@
-import { useEffect } from 'react'
-import { HashRouter } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { useAuthStore } from '@authState/useAuthStore'
-import { Navbar } from '@shared/components/layout/Navbar'
-import { ParticleBackground } from '@shared/components/layout/ParticleBackground'
-import { AnimatedRoutes } from '@app/router/AnimatedRoutes'
+import { AnimatedRoutes } from "@app/router/AnimatedRoutes";
+import { useAuthStore } from "@auth/store";
+import { Navbar } from "@shared/components/layout/Navbar";
+import { ParticleBackground } from "@shared/components/layout/ParticleBackground";
+import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { HashRouter } from "react-router-dom";
 
 export const App = () => {
-  const { init, loading } = useAuthStore()
+  const { init, loading } = useAuthStore();
 
   useEffect(() => {
-    const unsubscribe = init()
-    return () => unsubscribe()
-  }, [init])
+    const unsubscribe = init();
+    return () => unsubscribe();
+  }, [init]);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full"
         />
       </div>
-    )
+    );
   }
 
   return (
@@ -36,5 +36,5 @@ export const App = () => {
         </main>
       </div>
     </HashRouter>
-  )
-}
+  );
+};

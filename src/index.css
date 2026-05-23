@@ -23,9 +23,3 @@
     @apply bg-gray-600;
   }
 }
-
-@layer utilities {
-  .glass {
-    @apply bg-gray-900/80 backdrop-blur-xl border border-gray-800;
-  }
-}

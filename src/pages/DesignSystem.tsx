@@ -1,58 +1,67 @@
-import { useState } from 'react'
-import { Button } from '@shared/components/ui/Button'
-import { Card } from '@shared/components/ui/Card'
-import { Badge } from '@shared/components/ui/Badge'
-import { Modal } from '@shared/components/ui/Modal'
+import { Badge } from "@shared/components/ui/Badge";
+import { Button } from "@shared/components/ui/Button";
+import { Card } from "@shared/components/ui/Card";
+import { Modal } from "@shared/components/ui/Modal";
+import { useState } from "react";
 
 const colors = [
-  { name: 'primary-500', class: 'bg-primary-500', hex: '#6366f1' },
-  { name: 'primary-400', class: 'bg-primary-400', hex: '#818cf8' },
-  { name: 'primary-300', class: 'bg-primary-300', hex: '#a5b4fc' },
-  { name: 'green-500', class: 'bg-green-500', hex: '#22c55e' },
-  { name: 'red-500', class: 'bg-red-500', hex: '#ef4444' },
-  { name: 'yellow-400', class: 'bg-yellow-400', hex: '#facc15' },
-  { name: 'gray-950', class: 'bg-gray-950', hex: '#030712' },
-  { name: 'gray-900', class: 'bg-gray-900', hex: '#111827' },
-  { name: 'gray-800', class: 'bg-gray-800', hex: '#1f2937' },
-  { name: 'gray-700', class: 'bg-gray-700', hex: '#374151' },
-  { name: 'gray-400', class: 'bg-gray-400', hex: '#9ca3af' },
-  { name: 'gray-300', class: 'bg-gray-300', hex: '#d1d5db' },
-]
+  { name: "primary-500", class: "bg-primary-500", hex: "#6366f1" },
+  { name: "primary-400", class: "bg-primary-400", hex: "#818cf8" },
+  { name: "primary-300", class: "bg-primary-300", hex: "#a5b4fc" },
+  { name: "green-500", class: "bg-green-500", hex: "#22c55e" },
+  { name: "red-500", class: "bg-red-500", hex: "#ef4444" },
+  { name: "yellow-400", class: "bg-yellow-400", hex: "#facc15" },
+  { name: "gray-950", class: "bg-gray-950", hex: "#030712" },
+  { name: "gray-900", class: "bg-gray-900", hex: "#111827" },
+  { name: "gray-800", class: "bg-gray-800", hex: "#1f2937" },
+  { name: "gray-700", class: "bg-gray-700", hex: "#374151" },
+  { name: "gray-400", class: "bg-gray-400", hex: "#9ca3af" },
+  { name: "gray-300", class: "bg-gray-300", hex: "#d1d5db" },
+];
 
 const buttonVariants = [
-  { variant: undefined, label: 'primary' },
-  { variant: 'secondary' as const, label: 'secondary' },
-  { variant: 'ghost' as const, label: 'ghost' },
-  { variant: 'danger' as const, label: 'danger' },
-]
+  { variant: undefined, label: "primary" },
+  { variant: "secondary" as const, label: "secondary" },
+  { variant: "ghost" as const, label: "ghost" },
+  { variant: "danger" as const, label: "danger" },
+];
 
 const badgeColors = [
-  { color: undefined, label: 'default' },
-  { color: 'primary' as const, label: 'primary' },
-  { color: 'green' as const, label: 'green' },
-  { color: 'yellow' as const, label: 'yellow' },
-  { color: 'red' as const, label: 'red' },
-  { color: 'gray' as const, label: 'gray' },
-]
+  { color: undefined, label: "default" },
+  { color: "primary" as const, label: "primary" },
+  { color: "green" as const, label: "green" },
+  { color: "yellow" as const, label: "yellow" },
+  { color: "red" as const, label: "red" },
+  { color: "gray" as const, label: "gray" },
+];
 
 export const DesignSystem = () => {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 pb-16">
       <header className="text-center space-y-3">
-        <h1 className="text-3xl font-bold text-white">Guía de Estilos y Estándares</h1>
-        <p className="text-gray-400">Sistema de diseño unificado para todas las páginas de QuizzY</p>
+        <h1 className="text-3xl font-bold text-white">
+          Guía de Estilos y Estándares
+        </h1>
+        <p className="text-gray-400">
+          Sistema de diseño unificado para todas las páginas de QuizzY
+        </p>
       </header>
 
       {/* Colors */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">1. Colores</h2>
-        <p className="text-sm text-gray-400">Paleta definida en <code className="text-primary-300">tailwind.config.js</code>.</p>
+        <p className="text-sm text-gray-400">
+          Paleta definida en{" "}
+          <code className="text-primary-300">tailwind.config.js</code>.
+        </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {colors.map(c => (
+          {colors.map((c) => (
             <div key={c.name} className="text-center">
-              <div className={`${c.class} h-20 rounded-xl mb-2 border border-gray-700`} />
+              <div
+                className={`${c.class} h-20 rounded-xl mb-2 border border-gray-700`}
+              />
               <code className="text-xs text-gray-400">{c.name}</code>
               <p className="text-xs text-gray-500">{c.hex}</p>
             </div>
@@ -79,7 +88,9 @@ colors: {
       {/* Typography */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">2. Tipografía</h2>
-        <p className="text-sm text-gray-400">Fuente del sistema (sans-serif de Tailwind).</p>
+        <p className="text-sm text-gray-400">
+          Fuente del sistema (sans-serif de Tailwind).
+        </p>
         <div className="space-y-2">
           <p className="text-3xl font-bold text-white">Heading 1 — 30px bold</p>
           <p className="text-2xl font-bold text-white">Heading 2 — 24px bold</p>
@@ -101,16 +112,26 @@ colors: {
       {/* Buttons */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">3. Botones</h2>
-        <p className="text-sm text-gray-400">Usar siempre el componente <code className="text-primary-300">Button</code> de <code className="text-primary-300">shared/components/ui</code>.</p>
+        <p className="text-sm text-gray-400">
+          Usar siempre el componente{" "}
+          <code className="text-primary-300">Button</code> de{" "}
+          <code className="text-primary-300">shared/components/ui</code>.
+        </p>
         <div className="flex flex-wrap gap-3 items-center">
-          {buttonVariants.map(b => (
-            <Button key={b.label} variant={b.variant} size="sm">{b.label}</Button>
+          {buttonVariants.map((b) => (
+            <Button key={b.label} variant={b.variant} size="sm">
+              {b.label}
+            </Button>
           ))}
-          {buttonVariants.map(b => (
-            <Button key={`${b.label}-md`} variant={b.variant}>{b.label}</Button>
+          {buttonVariants.map((b) => (
+            <Button key={`${b.label}-md`} variant={b.variant}>
+              {b.label}
+            </Button>
           ))}
-          {buttonVariants.map(b => (
-            <Button key={`${b.label}-lg`} variant={b.variant} size="lg">{b.label}</Button>
+          {buttonVariants.map((b) => (
+            <Button key={`${b.label}-lg`} variant={b.variant} size="lg">
+              {b.label}
+            </Button>
           ))}
         </div>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`import { Button } from '@shared/components/ui/Button'
@@ -126,7 +147,11 @@ colors: {
       {/* Cards */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">4. Cards</h2>
-        <p className="text-sm text-gray-400">Usar siempre el componente <code className="text-primary-300">Card</code> para contenedores con fondo, borde y padding.</p>
+        <p className="text-sm text-gray-400">
+          Usar siempre el componente{" "}
+          <code className="text-primary-300">Card</code> para contenedores con
+          fondo, borde y padding.
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card className="p-4">
             <p className="text-white font-semibold">Card con padding 4</p>
@@ -134,7 +159,9 @@ colors: {
           </Card>
           <Card className="p-6">
             <p className="text-white font-semibold">Card con padding 6</p>
-            <p className="text-sm text-gray-400 mt-1">Uso: contenedores principales</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Uso: contenedores principales
+            </p>
           </Card>
         </div>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`import { Card } from '@shared/components/ui/Card'
@@ -147,10 +174,14 @@ colors: {
       {/* Badges */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">5. Badges</h2>
-        <p className="text-sm text-gray-400">Etiquetas de estado, categoría o conteo.</p>
+        <p className="text-sm text-gray-400">
+          Etiquetas de estado, categoría o conteo.
+        </p>
         <div className="flex flex-wrap gap-2">
-          {badgeColors.map(b => (
-            <Badge key={b.label} color={b.color}>{b.label}</Badge>
+          {badgeColors.map((b) => (
+            <Badge key={b.label} color={b.color}>
+              {b.label}
+            </Badge>
           ))}
         </div>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`import { Badge } from '@shared/components/ui/Badge'
@@ -166,13 +197,26 @@ colors: {
       {/* Modals */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">6. Modales</h2>
-        <p className="text-sm text-gray-400">Diálogos modales con overlay, título y contenido.</p>
-        <Button onClick={() => setModalOpen(true)}>Abrir modal de ejemplo</Button>
-        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Modal de Ejemplo">
+        <p className="text-sm text-gray-400">
+          Diálogos modales con overlay, título y contenido.
+        </p>
+        <Button onClick={() => setModalOpen(true)}>
+          Abrir modal de ejemplo
+        </Button>
+        <Modal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Modal de Ejemplo"
+        >
           <div className="space-y-4">
-            <p className="text-gray-300">Este es un modal de ejemplo que muestra el patrón estándar de diálogo.</p>
+            <p className="text-gray-300">
+              Este es un modal de ejemplo que muestra el patrón estándar de
+              diálogo.
+            </p>
             <div className="flex gap-3 justify-end">
-              <Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button>
+              <Button variant="secondary" onClick={() => setModalOpen(false)}>
+                Cancelar
+              </Button>
               <Button onClick={() => setModalOpen(false)}>Confirmar</Button>
             </div>
           </div>
@@ -192,12 +236,24 @@ colors: {
 
       {/* Form Elements */}
       <Card className="p-6 space-y-4">
-        <h2 className="text-xl font-bold text-white">7. Elementos de Formulario</h2>
-        <p className="text-sm text-gray-400">Inputs, selects y textareas usan las mismas clases de Tailwind en toda la app.</p>
+        <h2 className="text-xl font-bold text-white">
+          7. Elementos de Formulario
+        </h2>
+        <p className="text-sm text-gray-400">
+          Inputs, selects y textareas usan las mismas clases de Tailwind en toda
+          la app.
+        </p>
         <div className="space-y-4">
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Input texto</label>
-            <input type="text" placeholder="Placeholder" readOnly className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary-500" />
+            <label className="text-xs text-gray-500 mb-1 block">
+              Input texto
+            </label>
+            <input
+              type="text"
+              placeholder="Placeholder"
+              readOnly
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+            />
           </div>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">Select</label>
@@ -208,7 +264,12 @@ colors: {
           </div>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">Textarea</label>
-            <textarea rows={3} placeholder="Placeholder" readOnly className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 resize-none" />
+            <textarea
+              rows={3}
+              placeholder="Placeholder"
+              readOnly
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 resize-none"
+            />
           </div>
         </div>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`/* Clases estándar para inputs */
@@ -220,7 +281,9 @@ className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5
       {/* Layout Pattern */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">8. Patrón de Layout</h2>
-        <p className="text-sm text-gray-400">Todas las páginas siguen esta estructura:</p>
+        <p className="text-sm text-gray-400">
+          Todas las páginas siguen esta estructura:
+        </p>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`// Estructura de layout estándar
 <div className="max-w-3xl mx-auto space-y-6">  // o max-w-2xl/max-w-4xl según necesidad
   {/* Header con botón volver */}
@@ -242,7 +305,13 @@ className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5
       {/* Icons */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">9. Íconos</h2>
-        <p className="text-sm text-gray-400">Usar siempre <strong>lucide-react</strong>. Tamaños estándar: <code className="text-primary-300">size={14}</code> (small), <code className="text-primary-300">size={16}</code> (default), <code className="text-primary-300">size={18}</code> (medium), <code className="text-primary-300">size={24}</code> (large).</p>
+        <p className="text-sm text-gray-400">
+          Usar siempre <strong>lucide-react</strong>. Tamaños estándar:{" "}
+          <code className="text-primary-300">size={14}</code> (small),{" "}
+          <code className="text-primary-300">size={16}</code> (default),{" "}
+          <code className="text-primary-300">size={18}</code> (medium),{" "}
+          <code className="text-primary-300">size={24}</code> (large).
+        </p>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`import { Plus, Save, ArrowLeft, Trash2 } from 'lucide-react'
 
 <Button><Plus size={14} /> Crear</Button>
@@ -253,7 +322,10 @@ className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5
       {/* Animations */}
       <Card className="p-6 space-y-4">
         <h2 className="text-xl font-bold text-white">10. Animaciones</h2>
-        <p className="text-sm text-gray-400">Usar <strong>framer-motion</strong> para transiciones de página y micro-interacciones.</p>
+        <p className="text-sm text-gray-400">
+          Usar <strong>framer-motion</strong> para transiciones de página y
+          micro-interacciones.
+        </p>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`import { motion } from 'framer-motion'
 
 // Transición de página (App.tsx)
@@ -275,8 +347,12 @@ className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5
 
       {/* Estructura del proyecto */}
       <Card className="p-6 space-y-4">
-        <h2 className="text-xl font-bold text-white">11. Arquitectura del proyecto</h2>
-        <p className="text-sm text-gray-400">Organización modular por features:</p>
+        <h2 className="text-xl font-bold text-white">
+          11. Arquitectura del proyecto
+        </h2>
+        <p className="text-sm text-gray-400">
+          Organización modular por features:
+        </p>
         <pre className="bg-gray-950 p-4 rounded-xl text-sm text-gray-300 overflow-x-auto">{`src/
 ├── features/              # Módulos por funcionalidad
 │   ├── quiz/              # Quizzes (tests, jugar, resultados)
@@ -295,12 +371,12 @@ className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5
 │   ├── components/
 │   │   ├── ui/            # Button, Card, Badge, Modal, etc.
 │   │   └── layout/        # Navbar, ParticleBackground
-│   ├── store/             # usePreferencesStore
-│   ├── utils/             # scoreCalculator, jsonExporter, etc.
+│   │   └── store/             # preferences.store
+│   ├── utils/             # jsonExporter, jsonImporter
 │   └── types/             # Interfaces
 ├── firebase/              # Servicios de Firebase
 └── pages/                 # App.tsx, DesignSystem`}</pre>
       </Card>
     </div>
-  )
-}
+  );
+};

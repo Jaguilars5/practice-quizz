@@ -1,6 +1,6 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
 import path from "path";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
@@ -13,12 +13,15 @@ export default defineConfig({
       "@quizData": path.resolve(__dirname, "src/features/quiz/data"),
       "@quizState": path.resolve(__dirname, "src/features/quiz/state"),
       "@flashcards": path.resolve(__dirname, "src/features/flashcards"),
-      "@flashcardData": path.resolve(__dirname, "src/features/flashcards/data"),
+      "@flashcardData": path.resolve(
+        __dirname,
+        "src/features/flashcards/services",
+      ),
       "@auth": path.resolve(__dirname, "src/features/auth"),
       "@authData": path.resolve(__dirname, "src/features/auth/data"),
       "@authState": path.resolve(__dirname, "src/features/auth/state"),
       "@folders": path.resolve(__dirname, "src/features/folders"),
-      "@folderData": path.resolve(__dirname, "src/features/folders/data"),
+      "@folderData": path.resolve(__dirname, "src/features/folders/services"),
       "@preferences": path.resolve(__dirname, "src/features/preferences"),
       "@shared": path.resolve(__dirname, "src/shared"),
     },
