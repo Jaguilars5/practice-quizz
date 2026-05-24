@@ -256,6 +256,7 @@ export const Home = () => {
               }
               handleUpdateFolderVisibility={handleUpdateFolderVisibility}
               foldersCount={folders.length}
+              currentUserEmail={user.email}
             />
           </details>
           <div className="hidden md:block">
@@ -282,6 +283,7 @@ export const Home = () => {
               }
               handleUpdateFolderVisibility={handleUpdateFolderVisibility}
               foldersCount={folders.length}
+              currentUserEmail={user.email}
             />
           </div>
         </div>
@@ -412,6 +414,7 @@ interface FolderSidebarProps {
     code?: string,
   ) => void;
   foldersCount: number;
+  currentUserEmail: string;
 }
 
 const FolderSidebar = ({
@@ -432,12 +435,13 @@ const FolderSidebar = ({
   handleRenameFolder,
   handleDeleteFolder,
   handleUpdateFolderVisibility,
+  currentUserEmail,
 }: FolderSidebarProps) => (
   <Card className="p-3 sticky top-24 space-y-3">
     <FolderList
       folders={foldersWithCounts}
       activeFolder={activeFolder}
-      currentUserEmail=""
+      currentUserEmail={currentUserEmail}
       onSelectFolder={setActiveFolder}
       onRenameFolder={handleRenameFolder}
       onDeleteFolder={handleDeleteFolder}

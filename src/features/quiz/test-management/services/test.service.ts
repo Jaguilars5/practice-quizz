@@ -58,19 +58,28 @@ export const saveTestToFirestore = async (
     visibility: test.visibility || "private",
     code: test.code || "",
   };
-  if (data.code) {
-    const existing = await getTestByCode(data.code);
+
+  // Remove 'id' to avoid undefined value in Firestore
+  const cleanData: Record<string, unknown> = { ...data };
+  delete cleanData.id;
+
+  // If test has a valid Firestore ID, update directly
+  if (test.id && !test.id.startsWith("test_")) {
+    await updateDoc(doc(db!, TEST_COLLECTION, test.id), cleanData);
+    return test.id;
+  }
+
+  // If has code, check if document already exists
+  if (cleanData.code) {
+    const existing = await getTestByCode(cleanData.code as string);
     if (existing) {
-      await updateDoc(doc(db!, TEST_COLLECTION, existing.id), {
-        ...data,
-        id: undefined,
-      });
+      await updateDoc(doc(db!, TEST_COLLECTION, existing.id), cleanData);
       return existing.id;
     }
   }
-  const rest = { ...data };
-  delete (rest as Record<string, unknown>).id;
-  const ref = await addDoc(testsRef(), rest);
+
+  // Create new document
+  const ref = await addDoc(testsRef(), cleanData);
   return ref.id;
 };
 

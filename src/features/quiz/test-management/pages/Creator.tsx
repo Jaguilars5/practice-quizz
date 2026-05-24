@@ -79,7 +79,10 @@ export const Creator = () => {
 
       if (hasFirebaseConfig) {
         try {
-          const id = await saveTestToFirestore({ ...testData, id: "" });
+          const id = await saveTestToFirestore({
+            ...testData,
+            id: editTest?.id || "",
+          });
           if (id) {
             const existing = getLocalTests().find(
               (t) => t.id === id || (values.code && t.code === values.code),

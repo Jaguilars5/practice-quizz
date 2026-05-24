@@ -11,6 +11,7 @@ import {
   getGlobalFlashcardSets,
   getLocalFlashcardSetByCode,
   getLocalFlashcardSets,
+  saveFlashcardSetToFirestore,
   saveFlashcardSetToLocal,
 } from "@flashcards/services";
 import { FolderList } from "@folders/components/FolderList";
@@ -23,6 +24,7 @@ import {
   getLocalFolders,
   getPublicFoldersFromFirestore,
   renameFolder,
+  saveFolderToFirestore,
   updateFolderVisibility,
 } from "@folders/services";
 import { Button } from "@shared/components/ui/Button";
@@ -73,50 +75,111 @@ export const FlashcardsHome = () => {
     }
 
     const loadFolders = async () => {
-      const local = getLocalFolders();
-      const seen = new Set(local.map((f) => f.id));
+      const existingLocalFolders = getLocalFolders();
       if (hasFirebaseConfig) {
         try {
           const [fromFs, publicFolders] = await Promise.all([
             getFoldersFromFirestore(user!.email),
             getPublicFoldersFromFirestore(),
           ]);
-          for (const f of [...fromFs, ...publicFolders]) {
-            if (!seen.has(f.id)) {
-              local.push(f);
-              seen.add(f.id);
+
+          const firestoreFolderIds = new Set(
+            [...fromFs, ...publicFolders].map((f) => f.id),
+          );
+
+          // Keep local-only folders (not in Firestore)
+          const localOnlyFolders = existingLocalFolders.filter(
+            (f) => !firestoreFolderIds.has(f.id),
+          );
+
+          // Build final list: local-only + Firestore
+          const merged = [...localOnlyFolders, ...fromFs, ...publicFolders];
+          localStorage.setItem("folders", JSON.stringify(merged));
+
+          // Upload local-only folders to Firestore
+          for (const f of localOnlyFolders) {
+            try {
+              const id = await saveFolderToFirestore(f);
+              if (id) {
+                const updated = getLocalFolders();
+                const idx = updated.findIndex((lf) => lf.id === f.id);
+                if (idx >= 0) {
+                  updated[idx] = { ...f, id };
+                  localStorage.setItem("folders", JSON.stringify(updated));
+                }
+              }
+            } catch (error) {
+              logError(error, "FlashcardsHome:syncLocalOnlyFolder");
             }
           }
-          localStorage.setItem("folders", JSON.stringify(local));
+
+          setFolders(merged);
         } catch (error) {
           logError(error, "FlashcardsHome:loadFolders");
+          setFolders(existingLocalFolders);
         }
+      } else {
+        setFolders(existingLocalFolders);
       }
-      setFolders(local);
     };
     loadFolders();
 
     const load = async () => {
-      const local = getLocalFlashcardSets();
-      const seen = new Set(local.map((s) => s.code));
+      const existingLocalSets = getLocalFlashcardSets();
       if (hasFirebaseConfig) {
         try {
           const [global, mine] = await Promise.all([
             getGlobalFlashcardSets(),
             getFlashcardSetsByCreator(user!.email),
           ]);
-          for (const s of [...global, ...mine]) {
-            if (!seen.has(s.code)) {
-              saveFlashcardSetToLocal(s);
-              local.push(s);
-              seen.add(s.code);
+
+          // Deduplicate Firestore results (a set can be both global AND owned by user)
+          const allFirestoreSets = [...global, ...mine];
+          const seenCodes = new Set<string>();
+          const uniqueFirestoreSets: FlashcardSet[] = [];
+          for (const s of allFirestoreSets) {
+            if (!seenCodes.has(s.code)) {
+              seenCodes.add(s.code);
+              uniqueFirestoreSets.push(s);
             }
           }
+
+          const firestoreSetCodes = new Set(
+            uniqueFirestoreSets.map((s) => s.code),
+          );
+
+          // Keep local-only sets (not in Firestore)
+          const localOnlySets = existingLocalSets.filter(
+            (s) => !firestoreSetCodes.has(s.code),
+          );
+
+          // Always update localStorage with Firestore data to prevent stale data
+          for (const s of uniqueFirestoreSets) {
+            saveFlashcardSetToLocal(s);
+          }
+
+          // Upload local-only sets to Firestore (created offline or failed to sync)
+          for (const s of localOnlySets) {
+            try {
+              const id = await saveFlashcardSetToFirestore(s);
+              if (id) {
+                saveFlashcardSetToLocal({ ...s, id });
+              }
+            } catch (error) {
+              logError(error, "FlashcardsHome:syncLocalOnlySet");
+            }
+          }
+
+          // Build final list: local-only + Firestore (deduplicated)
+          const finalSets = [...localOnlySets, ...uniqueFirestoreSets];
+          setSets(finalSets);
         } catch (error) {
           logError(error, "FlashcardsHome:loadFlashcards");
+          setSets(existingLocalSets);
         }
+      } else {
+        setSets(existingLocalSets);
       }
-      setSets([...local]);
     };
     load();
   }, [user, navigate]);

@@ -49,17 +49,18 @@ export const createFolderInFirestore = async (
   visibility: "private" | "public" | "code" = "private",
   code?: string,
 ): Promise<Folder | null> => {
-  const folder = {
+  const folder: Record<string, unknown> = {
     name,
     createdBy,
     createdAt: new Date().toISOString(),
     visibility,
-    code,
   };
+  // Only include code if defined to avoid Firestore error
+  if (code) folder.code = code;
 
   try {
     const ref = await addDoc(foldersRef(), folder);
-    return { ...folder, id: ref.id };
+    return { ...folder, id: ref.id } as Folder;
   } catch (error) {
     logError(error, "folder.service:createFolder");
     return null;
@@ -107,5 +108,44 @@ export const deleteFolderFromFirestore = async (
   } catch (error) {
     logError(error, "folder.service:deleteFolder");
     return false;
+  }
+};
+
+// Sync an existing folder object to Firestore (for offline-created or failed-sync folders)
+export const saveFolderToFirestore = async (
+  folder: Folder,
+): Promise<string | null> => {
+  // If folder already has a valid Firestore ID, update it
+  if (folder.id && !folder.id.startsWith("folder_")) {
+    const data: Record<string, unknown> = {
+      name: folder.name,
+      createdBy: folder.createdBy,
+      createdAt: folder.createdAt,
+      visibility: folder.visibility,
+    };
+    if (folder.code) data.code = folder.code;
+    try {
+      await updateDoc(doc(db!, FOLDER_COLLECTION, folder.id), data);
+      return folder.id;
+    } catch (error) {
+      logError(error, "folder.service:saveFolderToFirestore:update");
+    }
+  }
+
+  // Otherwise create as new document
+  const data: Record<string, unknown> = {
+    name: folder.name,
+    createdBy: folder.createdBy,
+    createdAt: folder.createdAt,
+    visibility: folder.visibility,
+  };
+  if (folder.code) data.code = folder.code;
+
+  try {
+    const ref = await addDoc(foldersRef(), data);
+    return ref.id;
+  } catch (error) {
+    logError(error, "folder.service:saveFolderToFirestore:create");
+    return null;
   }
 };

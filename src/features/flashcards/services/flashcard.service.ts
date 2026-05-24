@@ -68,19 +68,33 @@ export const saveFlashcardSetToFirestore = async (
     visibility: set.visibility || "private",
     code: set.code || "",
   };
-  if (data.code) {
-    const existing = await getFlashcardSetByCode(data.code);
+
+  // Remove 'id' to avoid undefined value in Firestore
+  const cleanData: Record<string, unknown> = { ...data };
+  delete cleanData.id;
+  if (!cleanData.code) delete cleanData.code;
+
+  // If set has a valid Firestore ID, update directly
+  if (set.id && !set.id.startsWith("flashcard_")) {
+    try {
+      await updateDoc(doc(db!, FLASHCARD_COLLECTION, set.id), cleanData);
+      return set.id;
+    } catch {
+      // Fall through to create as new
+    }
+  }
+
+  // If has code, check if document already exists
+  if (cleanData.code) {
+    const existing = await getFlashcardSetByCode(cleanData.code as string);
     if (existing) {
-      await updateDoc(doc(db!, FLASHCARD_COLLECTION, existing.id), {
-        ...data,
-        id: undefined,
-      });
+      await updateDoc(doc(db!, FLASHCARD_COLLECTION, existing.id), cleanData);
       return existing.id;
     }
   }
-  const rest = { ...data };
-  delete (rest as Record<string, unknown>).id;
-  const ref_ = await addDoc(ref(), rest);
+
+  // Create new document
+  const ref_ = await addDoc(ref(), cleanData);
   return ref_.id;
 };
 
